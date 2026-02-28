@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Prescription PDF</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; position: relative; }
+    h2 { text-align: center; color: #0b79d0; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+    th, td { border: 1px solid #ccc; padding: 6px; font-size: 12px; text-align: left; }
+    th { background: #f0f0f0; }
+    .pet-info {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      text-align: right;
+      font-size: 12px;
+      background: #f9f9f9;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .pet-info p { margin: 5px 0; }
+  </style>
+</head>
+<body>
+
+  <div class="pet-info">
+    <p><strong>Pet Name:</strong> {{ petName }}</p>
+    <p><strong>Pet Number:</strong> {{ petNo }}</p>
+    <p><strong>Disease:</strong> {{ disease }}</p>
+  </div>
+
+  <h2>Veterinary Prescription & Diet Plan</h2>
+
+  <h3>Prescription Schedule</h3>
+
+  <table>
+    <thead>
+      <tr><th>Date</th><th>Time</th><th>Medicine</th><th>Dosage</th>
+          <th>Route</th><th>Duration</th><th>Notes</th></tr>
+    </thead>
+    <tbody>
+      {% for r in prescription_plan %}
+      <tr>
+        <td>{{ r.date }}</td><td>{{ r.time }}</td><td>{{ r.medicine }}</td>
+        <td>{{ r.dosage }}</td><td>{{ r.route }}</td>
+        <td>{{ r.duration }}</td><td>{{ r.notes }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h3>Diet & Recovery Plan</h3>
+  <table>
+    <thead>
+      <tr><th>Date</th><th>Feeding Time</th><th>Food Type</th>
+          <th>Quantity</th><th>Notes</th></tr>
+    </thead>
+    <tbody>
+      {% for r in diet_plan %}
+      <tr>
+        <td>{{ r.date }}</td><td>{{ r.feeding_time }}</td><td>{{ r.food_type }}</td>
+        <td>{{ r.quantity }}</td><td>{{ r.notes }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h3>Owner-Friendly Explanation</h3>
+  <p>{{ explanation }}</p>
+</body>
+</html>

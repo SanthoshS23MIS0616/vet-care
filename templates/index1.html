@@ -1,0 +1,375 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Pet Symptom Selection (robust)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif;max-width:900px;margin:24px auto;padding:12px}
+    h2{text-align:center}
+    .info{margin-bottom:18px}
+    label{font-weight:600}
+    .symptom-row{display:flex;gap:10px;margin-bottom:12px}
+    select,input{padding:8px;font-size:14px;flex:1}
+    button{padding:10px 18px;font-size:15px;cursor:pointer}
+    #backBtn{background:#ddd;border:0}
+    #predictBtn{background:#0b79d0;color:#fff;border:0}
+    #loaderNote{margin-top:12px;color:#444}
+    .small{font-size:13px;color:#666}
+
+    #predictImgBtn {
+      background: #28a745;
+      color: #fff;
+      border: 0;
+      margin-left: 10px;
+      padding: 10px 18px;
+      font-size: 15px;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background 0.3s;
+    }
+    #predictImgBtn:hover { background: #218838; }
+
+    #imagePredictSection {
+      display: none;
+      flex: 1;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid #ccc;
+      padding: 8px;
+      border-radius: 6px;
+    }
+
+    #skinResult {
+      margin-top: 15px;
+      padding: 10px;
+      background: #f5f5f5;
+      border-radius: 6px;
+      white-space: pre-wrap;
+    }
+       #prescribeBtn {
+      display: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      background: #28a745;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      margin-top: 10px;
+    }
+    #prescribeBtn:hover {
+      background: #218838;
+    }
+    #diseaseSection {
+      margin: 20px 0;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .button-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    #imagePredictSection input,
+    #imagePredictSection button {
+      padding: 8px 12px;
+      font-size: 14px;
+    }
+    /* Full-Screen 3D Colorful Light Background - Performant & Impressive */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      background:
+        /* Light colorful gradient base - Mixed violet/pink/blue/green like chameleon paint */
+        linear-gradient(135deg, hsl(270 100% 50% / 0.4) 0%, hsl(330 100% 70% / 0.3) 20%, hsl(195 100% 50% / 0.35) 40%, hsl(150 100% 50% / 0.3) 60%, hsl(270 100% 50% / 0.4) 80%, hsl(330 100% 70% / 0.3) 100%),
+        /* Additional mixing layers for iridescent shift */
+        linear-gradient(45deg, hsl(195 100% 50% / 0.25) 0%, hsl(150 100% 50% / 0.25) 50%, hsl(270 100% 50% / 0.25) 100%),
+        linear-gradient(90deg, hsl(330 100% 70% / 0.2) 0%, hsl(195 100% 50% / 0.2) 100%),
+        /* 3D layered radials for depth - Subtle colorful glows in specified colors */
+        radial-gradient(ellipse at 15% 15%, hsl(270 100% 50% / 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 85% 85%, hsl(330 100% 70% / 0.12) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 70%, hsl(195 100% 50% / 0.1) 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 20%, hsl(150 100% 50% / 0.12) 0%, transparent 70%);
+      background-size: 400% 400%, 300% 300%, 200% 200%, 100% 100%, 100% 100%, 100% 100%, 100% 100%;
+      animation: bgShift 8s ease-in-out infinite; /* Faster transition time: 8s for dynamic mix */
+      transform-style: preserve-3d;
+      will-change: background-position; /* GPU optimization */
+      pointer-events: none;
+    }
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      background:
+        /* 3D tilt layer - Light rotation for depth with color mix */
+        linear-gradient(45deg, hsl(150 100% 50% / 0.08) 0%, hsl(270 100% 50% / 0.08) 50%, hsl(330 100% 70% / 0.08) 100%);
+      transform: rotateX(3deg) rotateY(3deg) translateZ(-30px); /* Subtle 3D tilt */
+      animation: tilt3D 12s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite alternate; /* Faster gentle sway: 12s */
+      border-radius: 5%; /* Soft immersive edges */
+    }
+    /* Smooth Animations */
+    @keyframes bgShift {
+      0%, 100% { background-position: 0% 0%, 0% 0%, 0% 0%, 15% 15%, 85% 85%, 50% 70%, 70% 20%; }
+      50% { background-position: 100% 100%, 100% 100%, 100% 100%, 85% 85%, 15% 15%, 70% 20%, 50% 70%; }
+    }
+    @keyframes tilt3D {
+      0% { transform: rotateX(1deg) rotateY(1deg) translateZ(-10px); }
+      100% { transform: rotateX(5deg) rotateY(5deg) translateZ(-50px); }
+    }
+  </style>
+</head>
+<body>
+  <h2>Pet Symptom Selection (robust loader)</h2>
+
+  <div class="info">
+    <p><label>Animal:</label> <span id="animalDisplay">—</span></p>
+    <p><label>Breed:</label> <span id="breedDisplay">—</span></p>
+    <p><label>Pet Name:</label> <input id="petName" placeholder="Enter pet name"></p>
+  </div>
+
+  <div class="symptom-row">
+    <select id="symptom1"><option value="">Select Symptom 1</option></select>
+    <select id="symptom2"><option value="">Select Symptom 2</option></select>
+  </div>
+  <div class="symptom-row">
+    <select id="symptom3"><option value="">Select Symptom 3</option></select>
+    <select id="symptom4"><option value="">Select Symptom 4</option></select>
+  </div>
+  <div class="symptom-row">
+    <select id="symptom5"><option value="">Select Symptom 5</option></select>
+  </div>
+
+  <button id="backBtn" onclick="goBack()">← Back to Breed</button>
+
+  <div class="button-container">
+    <button id="predictBtn">Predict Disease</button>
+    <button id="predictImgBtn" onclick="showImagePredict()">📸 Predict Skin Disease Using Image</button>
+
+    <div id="imagePredictSection">
+      <input type="file" id="skinImage" accept="image/*">
+      <button onclick="predictSkinDisease()">Predict Disease</button>
+      <div id="skinResult"></div>
+    </div>
+  </div>
+
+  <div id="loaderNote" class="small"></div>
+
+   <div id="diseaseSection">
+    <span id="diseaseResult"></span><br>
+    <button id="prescribeBtn">Give Prescription</button>
+  </div>
+
+<script src="javadisease.js"></script>
+<script>
+let guess = ''; // Global variable to store predicted disease from image or symptoms for further use
+
+function showImagePredict(){
+  document.getElementById('predictImgBtn').style.display = 'none';
+  document.getElementById('imagePredictSection').style.display = 'flex';
+}
+
+async function predictSkinDisease(){
+  const fileInput = document.getElementById('skinImage');
+  const resultDiv = document.getElementById('skinResult');
+  if (!fileInput.files.length) {
+    alert('Please choose an image first.');
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('image', fileInput.files[0]);
+
+  resultDiv.textContent = "⏳ Predicting skin disease...";
+
+  try {
+    const res = await fetch('/predict_skin_gemini', {
+      method: 'POST',
+      body: formData
+    });
+    if (!res.ok) {
+      const err = await res.text();
+      throw new Error(err);
+    }
+    const data = await res.json();
+    if (data.error){
+      resultDiv.textContent = "❌ " + data.error;
+    } else {
+      guess = data.result; // Store in global 'guess' variable
+      resultDiv.textContent = "✅ Prediction: " + data.result;
+
+      // Integrate with main flow: Update disease display and localStorage
+      document.getElementById('diseaseResult').textContent = `Predicted Disease: ${guess} (from skin image)`;
+
+      const animal  = document.getElementById('animalDisplay').textContent.trim();
+      const breed   = document.getElementById('breedDisplay').textContent.trim();
+      const petName = document.getElementById('petName').value.trim() || 'Unnamed';
+      const petNo   = 'PET-' + Date.now() + '-' + Math.floor(Math.random()*1000);
+      const symptoms = []; // No symptoms for image predict
+
+      const petRecord = { petNo, animal, breed, petName, symptoms, disease: guess };
+      localStorage.setItem('latestPetRecord', JSON.stringify(petRecord));
+
+      // Reveal the next-step button
+      document.getElementById('prescribeBtn').style.display = 'inline-block';
+    }
+  } catch (err) {
+    resultDiv.textContent = "⚠️ Error: " + err.message;
+  }
+}
+
+function goBack() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const animal = urlParams.get("animal") || "";
+  window.location.href = `/two?animal=${encodeURIComponent(animal)}`;
+}
+
+async function init(){
+  const urlParams = new URLSearchParams(window.location.search);
+  const breed = urlParams.get("breed");
+  const animal = urlParams.get("animal");
+
+  document.getElementById('animalDisplay').textContent = animal || 'Not selected';
+  document.getElementById('breedDisplay').textContent = breed || 'Not selected';
+
+  if (breed) {
+    try {
+      const res = await fetch('/static/data/jesus.json');
+      const data = await res.json();
+
+      // Fixed: Flat access using breed as key (per jesus.json structure)
+      const symptoms = data[breed]; // Direct access: {"breed": [symptoms]}
+
+      if (Array.isArray(symptoms)) {
+        for(let i=1; i<=5; i++){
+          const select = document.getElementById(`symptom${i}`);
+          select.innerHTML = `<option value="">Select Symptom ${i}</option>`;
+          symptoms.forEach(sym => {
+            const opt = document.createElement("option");
+            opt.value = sym;
+            opt.textContent = sym;
+            select.appendChild(opt);
+          });
+        }
+      } else {
+        console.warn("Breed found but symptoms are not an array.");
+      }
+
+    } catch(err){
+      console.error("Error loading symptoms:", err);
+    }
+  } else {
+    console.warn("Breed not found in URL.");
+  }
+
+  // Add no-duplicate symptom logic
+  const selects = ['symptom1', 'symptom2', 'symptom3', 'symptom4', 'symptom5'].map(id => document.getElementById(id));
+  function updateOptions() {
+    const selected = new Set();
+    selects.forEach(s => {
+      const val = s.value;
+      if (val) selected.add(val);
+    });
+    selects.forEach(s => {
+      Array.from(s.options).forEach(opt => {
+        if (opt.value && selected.has(opt.value) && opt.value !== s.value) {
+          opt.disabled = true;
+        } else {
+          opt.disabled = false;
+        }
+      });
+    });
+  }
+  selects.forEach(s => s.addEventListener('change', updateOptions));
+  updateOptions(); // Initial call
+}
+
+document.addEventListener('DOMContentLoaded', init);
+
+// Predict Disease button (symptoms)
+document.getElementById('predictBtn').addEventListener('click', async () => {
+  const symptoms = [];
+  for (let i = 1; i <= 5; i++) {
+    const v = document.getElementById(`symptom${i}`).value;
+    if (v) symptoms.push(v);
+  }
+  if (!symptoms.length) {
+    return alert('⚠️ Please select at least one symptom.');
+  }
+
+  document.getElementById('loaderNote').textContent = '⏳ Predicting disease…';
+  try {
+    const res = await fetch('/predict_symptoms_gemini', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ symptoms })
+    });
+    if (!res.ok) {
+      const err = await res.text();
+      throw new Error(err);
+    }
+    const { disease } = await res.json();
+    guess = disease; // Store in global 'guess' variable
+    document.getElementById('loaderNote').textContent = '';
+    document.getElementById('diseaseResult').textContent = 
+      `Predicted Disease: ${disease}`;
+
+    // Save record for next step
+    const animal  = document.getElementById('animalDisplay').textContent.trim();
+    const breed   = document.getElementById('breedDisplay').textContent.trim();
+    const petName = document.getElementById('petName').value.trim() || 'Unnamed';
+    const petNo   = 'PET-' + Date.now() + '-' + Math.floor(Math.random()*1000);
+
+    const petRecord = { petNo, animal, breed, petName, symptoms, disease };
+    localStorage.setItem('latestPetRecord', JSON.stringify(petRecord));
+
+    // Reveal the next‐step button
+    document.getElementById('prescribeBtn').style.display = 'inline-block';
+
+  } catch (err) {
+    document.getElementById('loaderNote').textContent = '';
+    alert(`❌ Error: ${err.message}`);
+  }
+});
+
+// Give Prescription button
+document.getElementById('prescribeBtn').addEventListener('click', () => {
+  // Retrieve pet record from localStorage
+  const petRecord = JSON.parse(localStorage.getItem('latestPetRecord') || '{}');
+  // Include the 'guess' variable
+  petRecord.guess = guess; // Add the predicted disease to the petRecord
+
+  // Navigate to prescription page with petRecord as JSON data
+  fetch('/generate_prescription', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ petRecord })
+  }).then(response => response.json())
+    .then(data => {
+      if (data.error) {
+        alert(`Error: ${data.error}`);
+      } else {
+        window.location.href = '/in';
+      }
+    }).catch(err => {
+      alert(`Network Error: ${err.message}`);
+    });
+});
+</script>
+</body>
+</html>

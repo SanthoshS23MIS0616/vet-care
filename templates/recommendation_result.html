@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Recommended Dog Breeds</title>
+</head>
+<body>
+    <h1>Recommended Dog Breeds</h1>
+    {% if data %}
+        <ul>
+        {% for item in data %}
+            <li>{{ item.name }} - Similarity: {{ item.similarity|round(2) }}</li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No recommendations available.</p>
+    {% endif %}
+</body>
+</html>

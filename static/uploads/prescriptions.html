@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Prescription & Care Plan</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    h2, h3 { color: #0b79d0; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background: #f0f0f0; }
+    #pdfDownload { display: inline-block; margin-top: 10px; 
+                   padding: 10px 15px; background: #28a745; color: #fff;
+                   text-decoration: none; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h2>✅ Your Prescription & Recovery Plan</h2>
+
+  <h3>Prescription Schedule</h3>
+  <table id="prescriptionTable">
+    <thead>
+      <tr>
+        <th>Date</th><th>Time</th><th>Medicine</th><th>Dosage</th>
+        <th>Route</th><th>Duration</th><th>Notes</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <h3>Diet & Recovery Plan</h3>
+  <table id="dietTable">
+    <thead>
+      <tr>
+        <th>Date</th><th>Feeding Time</th><th>Food Type</th>
+        <th>Quantity</th><th>Notes</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <h3>Owner-Friendly Explanation</h3>
+  <p id="explanation"></p>
+
+  <a id="pdfDownload" href="#" download="prescriptions.pdf">
+    📥 Download Full PDF
+  </a>
+
+<script>
+  async function loadPlan() {
+    // 1) Get the saved record
+    const record = JSON.parse(localStorage.getItem('latestPetRecord'));
+    if (!record) {
+      alert('No saved pet record found.');
+      return;
+    }
+
+    // 2) Send to Flask to generate plan + PDF
+    const res = await fetch('/generate_prescription', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(record)
+    });
+    if (!res.ok) {
+      alert('Failed to generate prescription.');
+      return;
+    }
+    const data = await res.json();
+
+    // 3) Populate Prescription Table
+    const pbody = document.querySelector('#prescriptionTable tbody');
+    data.prescription_plan.forEach(row => {
+      const tr = document.createElement('tr');
+      ['date','time','medicine','dosage','route','duration','notes']
+        .forEach(k => {
+          const td = document.createElement('td');
+          td.textContent = row[k] || '';
+          tr.appendChild(td);
+        });
+      pbody.appendChild(tr);
+    });
+
+    // 4) Populate Diet Table
+    const dbody = document.querySelector('#dietTable tbody');
+    data.diet_plan.forEach(row => {
+      const tr = document.createElement('tr');
+      ['date','feeding_time','food_type','quantity','notes']
+        .forEach(k => {
+          const td = document.createElement('td');
+          td.textContent = row[k] || '';
+          tr.appendChild(td);
+        });
+      dbody.appendChild(tr);
+    });
+
+    // 5) Owner Explanation
+    document.getElementById('explanation').textContent = data.explanation;
+
+    // 6) PDF link
+    document.getElementById('pdfDownload').href = data.pdf_url;
+  }
+
+  document.addEventListener('DOMContentLoaded', loadPlan);
+</script>
+</body>
+</html>

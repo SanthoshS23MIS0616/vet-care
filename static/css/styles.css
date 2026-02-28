@@ -1,0 +1,525 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333; /* Improved text readability */
+    background-color: #ffffff; /* Light background for contrast */
+    overflow-x: hidden; /* Prevents horizontal scroll */
+}
+.navbar {
+    background-color: #e9cc3d;
+}
+
+.btn-nav {
+    background-color: #f15015;
+    color: #ffffff;
+    border-radius: 25px;
+    margin-left: 10px;
+    padding: 8px 20px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-nav:hover {
+    background-color: #ff6b35;
+    color: #ffffff;
+}
+
+.btn-contact {
+    background-color: #5f3f19;
+    color: #ffffff;
+    border-radius: 2px;
+    margin-left: 10px;
+    padding: 8px 20px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-contact:hover {
+    background-color: #8c5a2b;
+    color: #ffffff;
+}
+.container, .jumbotron, footer {
+    padding-left: 20px;
+    padding-right: 15px;
+}
+
+.navbar {
+    background-color: #e9cc3d; /* Bright blue for visibility */
+}
+
+.navbar-dark .navbar-brand, 
+.navbar-dark .navbar-nav .nav-link {
+    color: #ffffff; /* This sets the text color to orange, change the hex code to your preferred color */
+}
+
+/* Color changes on hover */
+.navbar-dark .navbar-nav .nav-link:hover,
+.navbar-dark .navbar-nav .nav-link:focus {
+    color: #ffffff;; /* This sets the hover text color to gold, change as needed */
+}
+
+
+.dog-navbar .navbar-brand {
+    font-weight: bold;
+    font-size: 1.8rem;
+    color: white;
+}
+
+.dog-navbar .nav-link {
+    font-size: 1.1rem;
+    color: #fff;
+    transition: color 0.3s ease-in-out;
+}
+
+.dog-navbar .nav-link:hover, .dog-navbar .nav-link:focus {
+    color: #ffd700; /* Gold color on hover for emphasis */
+    text-decoration: none;
+}
+
+.jumbotron {
+    background-color: #e9cc3d;
+    /*background-image: linear-gradient(to bottom, #e9cc3d, #ffffff); /* Gradient from light yellow to a darker yellow */
+    color: white;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    
+    min-height: 400px;
+}
+.jumbotron {
+    display: flex;
+    align-items: flex-start; /* Align items to the top */
+    justify-content: space-between; /* Distribute content horizontally */
+    flex-wrap: wrap; /* Allow content to wrap on smaller screens */
+}
+
+.jumbotron .col-md-6:first-child {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Align content to the left */
+}
+
+.jumbotron .btn {
+    font-size: 1.2rem;
+    padding: 0.8rem 1.5rem;
+    margin-top: 1rem;
+    align-self: flex-start;
+    background-color: #5f3f19;
+    color: #ffffff;
+    border: none;
+    border-radius: 30px;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+.jumbotron .btn:hover {
+    background-color: #f15015;
+    color: #ffffff;
+}
+
+
+.jumbotron h1 {
+    font-size: 60px;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    color: #f15015;
+    text-shadow: #666;
+    text-decoration: underline;
+    text-align:left; /* Larger font size for the heading */
+}
+
+.jumbotron p {
+    font-size: 30px;
+    font-family: 'Times New Roman', Times, serif;
+    color:#5f3f19;
+    border-block: 2px;
+    text-decoration:double;
+    text-align: left;
+    text-rendering: geometricPrecision;
+    font-style: italic; /* Larger font size for the paragraph */
+}
+.jumbotron .btn {
+    font-size: 1.2rem; /* Increase the font size */
+    padding: 0.8rem 1.5rem; /* Increase the padding */
+    margin-top: 1rem; /* Add some top margin for spacing */
+    text-align: left; /* Align the button to the left */
+}
+.img-fluid{
+    padding-left: 30%;
+    
+
+}
+
+.btn.btn-light{
+    justify-content: left;
+    text-align: left;
+    -moz-box-align: left;
+    position:static;
+}
+
+
+.card-img-top {
+    width: 200px; /* Decreased width to make the image smaller and icon-like */
+    height:fit-content; /* Maintain the aspect ratio of the image */
+    display: block; /* Ensures the image is centered if smaller than the parent container */
+    margin: 0 auto; /* Centers the image horizontally in the container */
+    border-radius: 80%; /* Optional: makes the image circular, often used for icons */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Optional: adds a subtle shadow for depth */
+}
+
+.background-illustrations {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    overflow: hidden; /* Ensures no overflow of illustrations outside the jumbotron */
+    z-index: -1; /* Places illustrations behind the content */
+    opacity: 0.6; /* Slightly transparent for subtlety */
+    filter: blur(8px); /* Soft blur for depth */
+}
+
+.bg-illustration {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 100%; /* Responsive max width */
+    height: auto;
+}
+
+.services {
+    display: flex;
+    flex-wrap: wrap;
+    background-color: transparent; /* Remove burlywood for animation overlay */
+    position: relative; /* Enable ::before/::after for animation */
+    overflow: hidden; /* Contain animation */
+}
+
+.services::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background:
+      /* Light colorful gradient base - Mixed violet/pink/blue/green like chameleon paint */
+      linear-gradient(135deg, hsl(270 100% 50% / 0.4) 0%, hsl(330 100% 70% / 0.3) 20%, hsl(195 100% 50% / 0.35) 40%, hsl(150 100% 50% / 0.3) 60%, hsl(270 100% 50% / 0.4) 80%, hsl(330 100% 70% / 0.3) 100%),
+      /* Additional mixing layers for iridescent shift */
+      linear-gradient(45deg, hsl(195 100% 50% / 0.25) 0%, hsl(150 100% 50% / 0.25) 50%, hsl(270 100% 50% / 0.25) 100%),
+      linear-gradient(90deg, hsl(330 100% 70% / 0.2) 0%, hsl(195 100% 50% / 0.2) 100%),
+      /* 3D layered radials for depth - Subtle colorful glows in specified colors */
+      radial-gradient(ellipse at 15% 15%, hsl(270 100% 50% / 0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 85% 85%, hsl(330 100% 70% / 0.12) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 70%, hsl(195 100% 50% / 0.1) 0%, transparent 60%),
+      radial-gradient(ellipse at 70% 20%, hsl(150 100% 50% / 0.12) 0%, transparent 70%);
+    background-size: 400% 400%, 300% 300%, 200% 200%, 100% 100%, 100% 100%, 100% 100%, 100% 100%;
+    animation: bgShift 6s ease-in-out infinite; /* Less transition: 6s for faster dynamic mix */
+    transform-style: preserve-3d;
+    will-change: background-position; /* GPU optimization */
+    pointer-events: none;
+  }
+  .services::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background:
+      /* 3D tilt layer - Light rotation for depth with color mix */
+      linear-gradient(45deg, hsl(150 100% 50% / 0.08) 0%, hsl(270 100% 50% / 0.08) 50%, hsl(330 100% 70% / 0.08) 100%);
+    transform: rotateX(3deg) rotateY(3deg) translateZ(-30px); /* Subtle 3D tilt */
+    animation: tilt3D 10s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite alternate; /* Less time: 10s gentle sway */
+    border-radius: 5%; /* Soft immersive edges */
+  }
+  /* Smooth Animations */
+  @keyframes bgShift {
+    0%, 100% { background-position: 0% 0%, 0% 0%, 0% 0%, 15% 15%, 85% 85%, 50% 70%, 70% 20%; }
+    50% { background-position: 100% 100%, 100% 100%, 100% 100%, 85% 85%, 15% 15%, 70% 20%, 50% 70%; }
+  }
+  @keyframes tilt3D {
+    0% { transform: rotateX(1deg) rotateY(1deg) translateZ(-10px); }
+    100% { transform: rotateX(5deg) rotateY(5deg) translateZ(-50px); }
+  }
+  /* Ensure cards float above background */
+  .services .card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); } /* Frosted glass for cards */
+
+.services .col-md-4 {
+    display: flex; /* Set the column to be a flex container */
+    flex: 1; /* The flex items (cards) will grow to take up space */
+}
+
+.services .card {
+    flex: 1; /* Allow the card to expand */
+    display: flex; /* Display card as a flexbox */
+    flex-direction: column; /* Arrange items vertically */
+    margin-bottom: 1rem; /* Add some margin to the bottom */
+}
+
+.services .card-body {
+    flex-grow: 1; /* Allow the card-body to fill the space */
+}
+
+.btn-primary {
+    color: #ffffff;
+    background-color: #ffa500;
+    border-color: #ffa500;
+    box-shadow: none;
+    text-decoration: none;
+    font-weight: 550;
+    font-style: oblique;
+}
+
+.btn-primary:hover {
+    background-color: #ff8c00;
+    border-color: #ff8c00;
+}
+
+.btn-primary:focus,
+.btn-primary:active {
+    outline: none !important;
+    box-shadow: none !important;
+    background-color: #ff8c00 !important;
+    border-color: #ff8c00 !important;
+}
+
+/* Ensure footer links remain white */
+footer {
+    background-color: #343a40;
+    color: #f8f9fa;
+    padding: 20px 0;
+}
+
+footer h4 {
+    color: #ffffff;
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+footer p {
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+footer ul li {
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+footer ul li a {
+    color: #f8f9fa;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+footer ul li a:hover {
+    color: #E4C59E;
+}
+
+footer hr {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 15px 0;
+}
+
+.guide-name,
+.college-name {
+    font-size: 16px;
+}
+
+.guide-name span,
+.college-name span {
+    font-weight: bold;
+}
+
+.footer-links {
+    text-align: right;
+}
+
+.department-batch {
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+.developer-names {
+    text-align: left;
+}
+
+.developer-names ul {
+    margin-left: 20px;
+}
+
+.card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 0 8px 16px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden; /* Hide overflow to maintain border radius */
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.card-title {
+    font-size: 1.5rem; /* Larger font size for titles */
+}
+
+.card-text {
+    color: #666; /* Dark gray for readability */
+    margin-bottom: 15px; /* Space before buttons or other content */
+}
+
+footer {
+    background-color: #343a40; /* Dark footer for contrast */
+    color: #f8f9fa; /* Light text color for visibility */
+    text-align: center;
+    padding: 20px 0; /* Padding for spacing */
+    box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.2); /* Shadow for lifting effect */
+}
+
+/* ... (existing styles) ... */
+
+/* New footer styles for ML Model Development Team section */
+footer .container h4 {
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+footer .container p {
+    font-size: 0.9em;
+    line-height: 1.6;
+}
+
+footer .container ul {
+    padding: 0;
+    list-style-type: none;
+    margin-bottom: 15px;
+}
+
+footer .container ul li {
+    line-height: 1.6;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    footer .container ul {
+        margin-bottom: 0;
+    }
+
+    footer .container ul li {
+        margin-bottom: 10px;
+    }
+}
+
+
+@media (max-width: 768px) {
+    .navbar-brand {
+        font-size: 1.5rem; /* Smaller font size for mobile */
+    }
+
+    .jumbotron {
+        padding: 40px 20px; /* Less padding on smaller screens */
+    }
+
+    .bg-illustration {
+        display: none; /* Hide large illustrations on small devices */
+    }
+}
+
+input[type='range'] {
+    cursor: pointer; /* Suggests that the slider can be dragged */
+}
+
+.input-group-text {
+    background: transparent;
+    border: none; /* Simplifies the UI, focusing on the drag icon */
+}
+
+.navbar .navbar-brand {
+    color: #fc4d0e;
+    ; /* Change to your desired color, example blue */
+}
+
+.form-group {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #ccc;
+}
+
+.form-control-range {
+    width: 100%;
+}
+
+.column-separator {
+    border-right: 2px solid #ccc;
+    padding-right: 30px;
+    margin-right: 30px;
+}
+
+.form-control-range::-webkit-slider-thumb {
+    background: #ffc107;
+}
+
+.form-control-range::-moz-range-thumb {
+    background: #ffc107;
+}
+
+.form-control-range::-ms-thumb {
+    background: #ffc107;
+}
+
+/* Disease Prediction Modal */
+#diseasePredictionModal .modal-dialog {
+    max-width: 800px;
+}
+
+#diseasePredictionModal .modal-body {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+#symptomCheckboxes {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(8, auto);
+    gap: 10px;
+}
+
+.custom-control-label {
+    font-weight: bold;
+}
+
+.custom-control-input:checked ~ .custom-control-label::before {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.custom-control-input:focus ~ .custom-control-label::before {
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.custom-control-input:not(:disabled):active ~ .custom-control-label::before {
+    background-color: #b3d7ff;
+    border-color: #b3d7ff;
+}
+#symptomCheckboxes {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(10, auto);
+    gap: 10px;
+}
+
+.example-images {
+    margin-top: 20px;
+}
+
+.example-images .img-thumbnail {
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+}
+
+.example-images .img-thumbnail:hover {
+    opacity: 0.8;
+}

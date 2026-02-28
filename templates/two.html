@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Select Breed</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="styles.css">
+  <style>/* General Body */
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      margin: 16px;
+      text-align: center;
+      position: relative;
+      overflow-x: hidden;
+    }
+    /* Full-Screen 3D Colorful Light Background - Performant & Impressive */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      background:
+        /* Light colorful gradient base - Mixed violet/pink/blue/green like chameleon paint */
+        linear-gradient(135deg, hsl(270 100% 50% / 0.4) 0%, hsl(330 100% 70% / 0.3) 20%, hsl(195 100% 50% / 0.35) 40%, hsl(150 100% 50% / 0.3) 60%, hsl(270 100% 50% / 0.4) 80%, hsl(330 100% 70% / 0.3) 100%),
+        /* Additional mixing layers for iridescent shift */
+        linear-gradient(45deg, hsl(195 100% 50% / 0.25) 0%, hsl(150 100% 50% / 0.25) 50%, hsl(270 100% 50% / 0.25) 100%),
+        linear-gradient(90deg, hsl(330 100% 70% / 0.2) 0%, hsl(195 100% 50% / 0.2) 100%),
+        /* 3D layered radials for depth - Subtle colorful glows in specified colors */
+        radial-gradient(ellipse at 15% 15%, hsl(270 100% 50% / 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 85% 85%, hsl(330 100% 70% / 0.12) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 70%, hsl(195 100% 50% / 0.1) 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 20%, hsl(150 100% 50% / 0.12) 0%, transparent 70%);
+      background-size: 400% 400%, 300% 300%, 200% 200%, 100% 100%, 100% 100%, 100% 100%, 100% 100%;
+      animation: bgShift 8s ease-in-out infinite; /* Faster transition time: 8s for dynamic mix */
+      transform-style: preserve-3d;
+      will-change: background-position; /* GPU optimization */
+      pointer-events: none;
+    }
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      background:
+        /* 3D tilt layer - Light rotation for depth with color mix */
+        linear-gradient(45deg, hsl(150 100% 50% / 0.08) 0%, hsl(270 100% 50% / 0.08) 50%, hsl(330 100% 70% / 0.08) 100%);
+      transform: rotateX(3deg) rotateY(3deg) translateZ(-30px); /* Subtle 3D tilt */
+      animation: tilt3D 12s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite alternate; /* Faster gentle sway: 12s */
+      border-radius: 5%; /* Soft immersive edges */
+    }
+    /* Smooth Animations */
+    @keyframes bgShift {
+      0%, 100% { background-position: 0% 0%, 0% 0%, 0% 0%, 15% 15%, 85% 85%, 50% 70%, 70% 20%; }
+      50% { background-position: 100% 100%, 100% 100%, 100% 100%, 85% 85%, 15% 15%, 70% 20%, 50% 70%; }
+    }
+    @keyframes tilt3D {
+      0% { transform: rotateX(1deg) rotateY(1deg) translateZ(-10px); }
+      100% { transform: rotateX(5deg) rotateY(5deg) translateZ(-50px); }
+    }
+    body{font-family: Arial, Helvetica, sans-serif;background:#f5f6fb;margin:16px}
+    .title{font-size:28px;margin-bottom:10px;color:#222}
+    .controls{margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;}
+    .controls button{margin-right:8px;padding:8px 12px;border-radius:6px;border:1px solid #ccc;background:#fff;cursor:pointer}
+    .controls input{padding:8px 12px;border-radius:6px;border:1px solid #ccc;max-width:220px;}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:20px}
+    .card{background:#fff;border-radius:8px;box-shadow:0 1px 6px rgba(0,0,0,0.12);padding:12px;text-align:center;display:none;cursor:pointer;}
+    .card img{width:100%;height:200px;object-fit:cover;border-radius:6px}
+    .card h2{font-size:18px;margin:10px 0 0;color:#333}
+    #noSelection{color:#555;margin-top:8px;display:none;}
+    @media (max-width:900px){.grid-3{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:520px){.grid-3{grid-template-columns:1fr}.card img{height:180px}}
+    /* Healing Meadow Glow - Vet Care Theme */
+.bg-vet-style-1 {
+  background: 
+    linear-gradient(135deg, hsl(150 40% 70% / 0.15) 0%, hsl(200 50% 75% / 0.15) 50%, hsl(150 40% 70% / 0.1) 100%), /* Soft green-to-blue fade */
+    radial-gradient(ellipse at top center, hsl(150 40% 80% / 0.2) 0%, transparent 70%), /* Gentle top glow */
+    radial-gradient(ellipse at bottom left, hsl(200 50% 85% / 0.1) 0%, transparent 60%); /* Subtle bottom bloom */
+  background-size: 100% 100%, 60% 40%, 40% 30%;
+  background-position: center, top, bottom left;
+  position: relative;
+  min-height: 100vh;
+}
+
+.bg-vet-style-1::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    repeating-linear-gradient(60deg, hsl(150 40% 70% / 0.05) 0px, transparent 1px, transparent 50px, hsl(150 40% 70% / 0.05) 51px),
+    repeating-linear-gradient(-30deg, hsl(200 50% 75% / 0.05) 0px, transparent 1px, transparent 40px, hsl(200 50% 75% / 0.05) 41px); /* Wavy grass-like lines */
+  pointer-events: none;
+  animation: meadow-wave 25s ease-in-out infinite;
+}
+
+.dark .bg-vet-style-1 {
+  background: 
+    linear-gradient(135deg, hsl(150 40% 60% / 0.12) 0%, hsl(200 50% 65% / 0.12) 50%, hsl(150 40% 60% / 0.08) 100%),
+    radial-gradient(ellipse at top center, hsl(150 40% 70% / 0.15) 0%, transparent 70%),
+    radial-gradient(ellipse at bottom left, hsl(200 50% 75% / 0.08) 0%, transparent 60%);
+}
+
+@keyframes meadow-wave {
+  0%, 100% { transform: translateX(0) translateY(0); }
+  50% { transform: translateX(10px) translateY(-5px); }
+}
+  </style>
+</head>
+<body>
+  <h1 class="title">🐾 Choose Breed</h1>
+
+  <div class="controls">
+    <button id="backBtn">◀ Back to animals</button>
+    <input type="text" id="searchBox" placeholder="Search breed...">
+  </div>
+
+  <div id="noSelection">No animal selected. Please choose an animal from the main page.</div>
+
+  <div class="grid-3" id="breedsGrid">
+    <!-- (All your breed cards remain here, unchanged) -->
+
+
+
+    {% for file in images %}
+  <img src="{{ url_for('static', filename='images/' ~ file) }}" alt="{{ file.split('.')[0] }}">
+  <h2>{{ file.split('.')[0] }}</h2>
+</div>
+{% endfor %}
+
+
+   <!-- ========== DOG ========== -->
+    <div class="card" data-animal="Dog"><img src="Indian Pariah.jpeg" alt="Indian Pariah"><h2>Indian Pariah</h2></div>
+    <div class="card" data-animal="Dog"><img src="Labrador Retriever.jpeg" alt="Labrador Retriever"><h2>Labrador Retriever</h2></div>
+    <div class="card" data-animal="Dog"><img src="German Shepherd.jpeg" alt="German Shepherd"><h2>German Shepherd</h2></div>
+    <div class="card" data-animal="Dog"><img src="Golden Retriever.jpeg" alt="Golden Retriever"><h2>Golden Retriever</h2></div>
+    <div class="card" data-animal="Dog"><img src="Beagle.jpeg" alt="Beagle"><h2>Beagle</h2></div>
+    <div class="card" data-animal="Dog"><img src="Indian Spitz.jpeg" alt="Indian Spitz"><h2>Indian Spitz</h2></div>
+    <div class="card" data-animal="Dog"><img src="Pomeranian.jpeg" alt="Pomeranian"><h2>Pomeranian</h2></div>
+    <div class="card" data-animal="Dog"><img src="Shih Tzu.jpeg" alt="Shih Tzu"><h2>Shih Tzu</h2></div>
+    <div class="card" data-animal="Dog"><img src="Pug.jpeg" alt="Pug"><h2>Pug</h2></div>
+    <div class="card" data-animal="Dog"><img src="Dachshund.jpeg" alt="Dachshund"><h2>Dachshund</h2></div>
+    <div class="card" data-animal="Dog"><img src="Rajapalayam.jpeg" alt="Rajapalayam"><h2>Rajapalayam</h2></div>
+    <div class="card" data-animal="Dog"><img src="Kanni.jpeg" alt="Kanni"><h2>Kanni</h2></div>
+    <div class="card" data-animal="Dog"><img src="Chippiparai.jpeg" alt="Chippiparai"><h2>Chippiparai</h2></div>
+    <div class="card" data-animal="Dog"><img src="Combai.jpeg" alt="Combai"><h2>Combai</h2></div>
+    <div class="card" data-animal="Dog"><img src="Rottweiler.jpeg" alt="Rottweiler"><h2>Rottweiler</h2></div>
+    <div class="card" data-animal="Dog"><img src="Doberman Pinscher.jpeg" alt="Doberman Pinscher"><h2>Doberman Pinscher</h2></div>
+    <div class="card" data-animal="Dog"><img src="Great Dane.jpeg" alt="Great Dane"><h2>Great Dane</h2></div>
+    <div class="card" data-animal="Dog"><img src="Boxer.jpeg" alt="Boxer"><h2>Boxer</h2></div>
+    <div class="card" data-animal="Dog"><img src="Bulldog.jpeg" alt="Bulldog"><h2>Bulldog</h2></div>
+    <div class="card" data-animal="Dog"><img src="French Bulldog.jpeg" alt="French Bulldog"><h2>French Bulldog</h2></div>
+    <div class="card" data-animal="Dog"><img src="Siberian Husky.jpeg" alt="Siberian Husky"><h2>Siberian Husky</h2></div>
+    <div class="card" data-animal="Dog"><img src="Saint Bernard.jpeg" alt="Saint Bernard"><h2>Saint Bernard</h2></div>
+    <div class="card" data-animal="Dog"><img src="Maltese.jpeg" alt="Maltese"><h2>Maltese</h2></div>
+    <div class="card" data-animal="Dog"><img src="Lhasa Apso.jpeg" alt="Lhasa Apso"><h2>Lhasa Apso</h2></div>
+    <div class="card" data-animal="Dog"><img src="Pembroke Welsh Corgi.jpeg" alt="Pembroke Welsh Corgi"><h2>Pembroke Welsh Corgi</h2></div>
+    <div class="card" data-animal="Dog"><img src="Chihuahua.jpeg" alt="Chihuahua"><h2>Chihuahua</h2></div>
+    <div class="card" data-animal="Dog"><img src="Dalmatian.jpeg" alt="Dalmatian"><h2>Dalmatian</h2></div>
+
+    <!-- ========== CAT ========== -->
+    <div class="card" data-animal="Cat"><img src="Indian Billi.jpeg" alt="Indian Billi"><h2>Indian Billi</h2></div>
+    <div class="card" data-animal="Cat"><img src="Persian Cat.jpeg" alt="Persian Cat"><h2>Persian Cat</h2></div>
+    <div class="card" data-animal="Cat"><img src="Siamese Cat.jpeg" alt="Siamese Cat"><h2>Siamese Cat</h2></div>
+    <div class="card" data-animal="Cat"><img src="Maine Coon.jpeg" alt="Maine Coon"><h2>Maine Coon</h2></div>
+    <div class="card" data-animal="Cat"><img src="Himalayan Cat.jpeg" alt="Himalayan Cat"><h2>Himalayan Cat</h2></div>
+    <div class="card" data-animal="Cat"><img src="Bombay Cat.jpeg" alt="Bombay Cat"><h2>Bombay Cat</h2></div>
+    <div class="card" data-animal="Cat"><img src="Bengal Cat.jpeg" alt="Bengal Cat"><h2>Bengal Cat</h2></div>
+    <div class="card" data-animal="Cat"><img src="Ragdoll.jpeg" alt="Ragdoll"><h2>Ragdoll</h2></div>
+    <div class="card" data-animal="Cat"><img src="British Shorthair.jpeg" alt="British Shorthair"><h2>British Shorthair</h2></div>
+    <div class="card" data-animal="Cat"><img src="Turkish Angora.jpeg" alt="Turkish Angora"><h2>Turkish Angora</h2></div>
+    <div class="card" data-animal="Cat"><img src="Russian Blue.jpeg" alt="Russian Blue"><h2>Russian Blue</h2></div>
+    <div class="card" data-animal="Cat"><img src="Scottish Fold.jpeg" alt="Scottish Fold"><h2>Scottish Fold</h2></div>
+    <div class="card" data-animal="Cat"><img src="American Shorthair.jpeg" alt="American Shorthair"><h2>American Shorthair</h2></div>
+    <div class="card" data-animal="Cat"><img src="Burmese Cat.jpeg" alt="Burmese Cat"><h2>Burmese Cat</h2></div>
+    <div class="card" data-animal="Cat"><img src="Abyssinian Cat.jpeg" alt="Abyssinian Cat"><h2>Abyssinian Cat</h2></div>
+    <div class="card" data-animal="Cat"><img src="Exotic Shorthair.jpeg" alt="Exotic Shorthair"><h2>Exotic Shorthair</h2></div>
+    <div class="card" data-animal="Cat"><img src="Oriental Shorthair.jpeg" alt="Oriental Shorthair"><h2>Oriental Shorthair</h2></div>
+    <div class="card" data-animal="Cat"><img src="Korat Cat.jpeg" alt="Korat Cat"><h2>Korat Cat</h2></div>
+    <div class="card" data-animal="Cat"><img src="Singapura Cat.jpeg" alt="Singapura Cat"><h2>Singapura Cat</h2></div>
+    <div class="card" data-animal="Cat"><img src="Tamil Nadu Native Stray Cats.jpeg" alt="Tamil Nadu Native Stray Cats"><h2>Tamil Nadu Native Stray Cats</h2></div>
+    <div class="card" data-animal="Cat"><img src="Pondicherry Cats.jpeg" alt="Pondicherry Cats"><h2>Pondicherry Cats</h2></div>
+
+    <!-- ========== COW ========== -->
+    <div class="card" data-animal="Cow"><img src="Gir Cow.jpeg" alt="Gir Cow"><h2>Gir Cow</h2></div>
+    <div class="card" data-animal="Cow"><img src="Sahiwal Cow.jpeg" alt="Sahiwal Cow"><h2>Sahiwal Cow</h2></div>
+    <div class="card" data-animal="Cow"><img src="Red Sindhi.jpeg" alt="Red Sindhi"><h2>Red Sindhi</h2></div>
+    <div class="card" data-animal="Cow"><img src="Tharparkar.jpeg" alt="Tharparkar"><h2>Tharparkar</h2></div>
+    <div class="card" data-animal="Cow"><img src="Ongole.jpeg" alt="Ongole"><h2>Ongole</h2></div>
+    <div class="card" data-animal="Cow"><img src="Kangeyam.jpeg" alt="Kangeyam"><h2>Kangeyam</h2></div>
+    <div class="card" data-animal="Cow"><img src="Pulikulam.jpeg" alt="Pulikulam"><h2>Pulikulam</h2></div>
+    <div class="card" data-animal="Cow"><img src="Bargur.jpeg" alt="Bargur"><h2>Bargur</h2></div>
+    <div class="card" data-animal="Cow"><img src="Umblachery.jpeg" alt="Umblachery"><h2>Umblachery</h2></div>
+    <div class="card" data-animal="Cow"><img src="Hallikar.jpeg" alt="Hallikar"><h2>Hallikar</h2></div>
+    <div class="card" data-animal="Cow"><img src="Krishna Valley Cow.jpeg" alt="Krishna Valley Cow"><h2>Krishna Valley Cow</h2></div>
+    <div class="card" data-animal="Cow"><img src="Deoni.jpeg" alt="Deoni"><h2>Deoni</h2></div>
+    <div class="card" data-animal="Cow"><img src="Kankrej.jpeg" alt="Kankrej"><h2>Kankrej</h2></div>
+    <div class="card" data-animal="Cow"><img src="Hariana.jpeg" alt="Hariana"><h2>Hariana</h2></div>
+    <div class="card" data-animal="Cow"><img src="Rathi.jpeg" alt="Rathi"><h2>Rathi</h2></div>
+    <div class="card" data-animal="Cow"><img src="Vechur.jpeg" alt="Vechur"><h2>Vechur</h2></div>
+    <div class="card" data-animal="Cow"><img src="Malnad Gidda.jpeg" alt="Malnad Gidda"><h2>Malnad Gidda</h2></div>
+    <div class="card" data-animal="Cow"><img src="Alambadi.jpeg" alt="Alambadi"><h2>Alambadi</h2></div>
+    <div class="card" data-animal="Cow"><img src="Amrit Mahal.jpeg" alt="Amrit Mahal"><h2>Amrit Mahal</h2></div>
+    <div class="card" data-animal="Cow"><img src="Punganur.jpeg" alt="Punganur"><h2>Punganur</h2></div>
+    <div class="card" data-animal="Cow"><img src="Jersey.jpeg" alt="Jersey"><h2>Jersey</h2></div>
+    <div class="card" data-animal="Cow"><img src="Holstein Friesian.jpeg" alt="Holstein Friesian"><h2>Holstein Friesian</h2></div>
+    <div class="card" data-animal="Cow"><img src="Brown Swiss.jpeg" alt="Brown Swiss"><h2>Brown Swiss</h2></div>
+    <div class="card" data-animal="Cow"><img src="Murrah Buffalo.jpeg" alt="Murrah Buffalo"><h2>Murrah Buffalo</h2></div>
+
+    <!-- ========== GOAT ========== -->
+    <div class="card" data-animal="Goat"><img src="Boer Goat.jpeg" alt="Boer Goat"><h2>Boer Goat</h2></div>
+    <div class="card" data-animal="Goat"><img src="Barbari Goat.jpeg" alt="Barbari Goat"><h2>Barbari Goat</h2></div>
+    <div class="card" data-animal="Goat"><img src="Black Bengal Goat.jpeg" alt="Black Bengal Goat"><h2>Black Bengal Goat</h2></div>
+    <div class="card" data-animal="Goat"><img src="Jamunapari Goat.jpeg" alt="Jamunapari Goat"><h2>Jamunapari Goat</h2></div>
+    <div class="card" data-animal="Goat"><img src="Sirohi Goat.jpeg" alt="Sirohi Goat"><h2>Sirohi Goat</h2></div>
+    <div class="card" data-animal="Goat"><img src="Beetal Goat.jpeg" alt="Beetal Goat"><h2>Beetal Goat</h2></div>
+    <div class="card" data-animal="Goat"><img src="Osmanabadi Goat.jpeg" alt="Osmanabadi Goat"><h2>Osmanabadi Goat</h2></div>
+    <div class="card" data-animal="Goat"><img src="Jakhrana Goat.jpeg" alt="Jakhrana Goat"><h2>Jakhrana Goat</h2></div>
+    <div class="card" data-animal="Goat"><img src="Malabari Goat.jpeg" alt="Malabari Goat"><h2>Malabari Goat</h2></div>
+    <div class="card" data-animal="Goat"><img src="Kanni Adu.jpeg" alt="Kanni Adu"><h2>Kanni Adu</h2></div>
+    <div class="card" data-animal="Goat"><img src="Kodi Adu.jpeg" alt="Kodi Adu"><h2>Kodi Adu</h2></div>
+    <div class="card" data-animal="Goat"><img src="Salem Black Goat.jpeg" alt="Salem Black Goat"><h2>Salem Black Goat</h2></div>
+    <div class="card" data-animal="Goat"><img src="Thalachery Goat.jpeg" alt="Thalachery Goat"><h2>Thalachery Goat</h2></div>
+    <div class="card" data-animal="Goat"><img src="Mecheri Goat.jpeg" alt="Mecheri Goat"><h2>Mecheri Goat</h2></div>
+
+    <!-- ========== SHEEP ========== -->
+<div class="card" data-animal="Horse"><img src="American Quarter Horse.jpeg" alt="American Quarter Horse"><h2>American Quarter Horse</h2></div>
+<div class="card" data-animal="Horse"><img src="Arabian Horse.jpeg" alt="Arabian Horse"><h2>Arabian Horse</h2></div>
+<div class="card" data-animal="Horse"><img src="Thoroughbred.jpeg" alt="Thoroughbred"><h2>Thoroughbred</h2></div>
+<div class="card" data-animal="Horse"><img src="Paint Horse.jpeg" alt="Paint Horse"><h2>Paint Horse</h2></div>
+<div class="card" data-animal="Horse"><img src="Appaloosa.jpeg" alt="Appaloosa"><h2>Appaloosa</h2></div>
+<div class="card" data-animal="Horse"><img src="Morgan Horse.jpeg" alt="Morgan Horse"><h2>Morgan Horse</h2></div>
+<div class="card" data-animal="Horse"><img src="Tennessee Walking Horse.jpeg" alt="Tennessee Walking Horse"><h2>Tennessee Walking Horse</h2></div>
+<div class="card" data-animal="Horse"><img src="Shetland Pony.jpeg" alt="Shetland Pony"><h2>Shetland Pony</h2></div>
+<div class="card" data-animal="Horse"><img src="Welsh Pony.jpeg" alt="Welsh Pony"><h2>Welsh Pony</h2></div>
+<div class="card" data-animal="Horse"><img src="Miniature Horse.jpeg" alt="Miniature Horse"><h2>Miniature Horse</h2></div>
+
+
+
+
+
+
+    <div class="card" data-animal="Sheep"><img src="Nellore Sheep.jpeg" alt="Nellore Sheep"><h2>Nellore Sheep</h2></div>
+    <div class="card" data-animal="Sheep"><img src="Deccani Sheep.jpeg" alt="Deccani Sheep"><h2>Deccani Sheep</h2></div>
+    <div class="card" data-animal="Sheep"><img src="Gaddi Sheep.jpeg" alt="Gaddi Sheep"><h2>Gaddi Sheep</h2></div>
+    <div class="card" data-animal="Sheep"><img src="Chokla Sheep.jpeg" alt="Chokla Sheep"><h2>Chokla Sheep</h2></div>
+    <div class="card" data-animal="Sheep"><img src="Rampur Bushair Sheep.jpeg" alt="Rampur Bushair Sheep"><h2>Rampur Bushair Sheep</h2></div>
+    <div class="card" data-animal="Sheep"><img src="Magra Sheep.jpeg" alt="Magra Sheep"><h2>Magra Sheep</h2></div>
+    <div class="card" data-animal="Sheep"><img src="Garole Sheep.jpeg" alt="Garole Sheep"><h2>Garole Sheep</h2></div>
+    <div class="card" data-animal="Sheep"><img src="Muzaffarnagari Sheep.jpeg" alt="Muzaffarnagari Sheep"><h2>Muzaffarnagari Sheep</h2></div>
+    <div class="card" data-animal="Sheep"><img src="Patanwadi Sheep.jpeg" alt="Patanwadi Sheep"><h2>Patanwadi Sheep</h2></div>
+    <div class="card" data-animal="Sheep"><img src="Jaisalmeri Sheep.jpeg" alt="Jaisalmeri Sheep"><h2>Jaisalmeri Sheep</h2></div>
+    <div class="card" data-animal="Sheep"><img src="Madras Red Sheep.jpeg" alt="Madras Red Sheep"><h2>Madras Red Sheep</h2></div>
+    <div class="card" data-animal="Sheep"><img src="Mecheri Sheep.jpeg" alt="Mecheri Sheep"><h2>Mecheri Sheep</h2></div>
+    <div class="card" data-animal="Sheep"><img src="Vembur Sheep.jpeg" alt="Vembur Sheep"><h2>Vembur Sheep</h2></div>
+    <div class="card" data-animal="Sheep"><img src="Kilakarsal Sheep.jpeg" alt="Kilakarsal Sheep"><h2>Kilakarsal Sheep</h2></div>
+    <div class="card" data-animal="Sheep"><img src="Ramnad White Sheep.jpeg" alt="Ramnad White Sheep"><h2>Ramnad White Sheep</h2></div>
+    <div class="card" data-animal="Sheep"><img src="Kenguri Sheep.jpeg" alt="Kenguri Sheep"><h2>Kenguri Sheep</h2></div>
+    <div class="card" data-animal="Sheep"><img src="Trichy Black Sheep.jpeg" alt="Trichy Black Sheep"><h2>Trichy Black Sheep</h2></div>
+    <div class="card" data-animal="Sheep"><img src="Coimbatore Sheep.jpeg" alt="Coimbatore Sheep"><h2>Coimbatore Sheep</h2></div>
+    <div class="card" data-animal="Sheep"><img src="Salem Sheep.jpeg" alt="Salem Sheep"><h2>Salem Sheep</h2></div>
+
+    <!-- ========== RABBIT ... etc (keeps rest unchanged) -->
+    <!-- rest of your cards unchanged --> 
+
+    <!-- ========== RABBIT ========== -->
+    <div class="card" data-animal="Rabbit"><img src="Indian Rabbit.jpeg" alt="Indian Rabbit"><h2>Indian Rabbit</h2></div>
+    <div class="card" data-animal="Rabbit"><img src="Angora Rabbit.jpeg" alt="Angora Rabbit"><h2>Angora Rabbit</h2></div>
+    <div class="card" data-animal="Rabbit"><img src="White Rabbit.jpeg" alt="White Rabbit"><h2>White Rabbit</h2></div>
+    <div class="card" data-animal="Rabbit"><img src="Grey Giant Rabbit.jpeg" alt="Grey Giant Rabbit"><h2>Grey Giant Rabbit</h2></div>
+    <div class="card" data-animal="Rabbit"><img src="Flemish Giant Rabbit.jpeg" alt="Flemish Giant Rabbit"><h2>Flemish Giant Rabbit</h2></div>
+    <div class="card" data-animal="Rabbit"><img src="Dutch Rabbit.jpeg" alt="Dutch Rabbit"><h2>Dutch Rabbit</h2></div>
+    <div class="card" data-animal="Rabbit"><img src="Himalayan Rabbit.jpeg" alt="Himalayan Rabbit"><h2>Himalayan Rabbit</h2></div>
+    <div class="card" data-animal="Rabbit"><img src="Rex Rabbit.jpeg" alt="Rex Rabbit"><h2>Rex Rabbit</h2></div>
+    <div class="card" data-animal="Rabbit"><img src="Lionhead Rabbit.jpeg" alt="Lionhead Rabbit"><h2>Lionhead Rabbit</h2></div>
+    <div class="card" data-animal="Rabbit"><img src="Soviet Chinchilla Rabbit.jpeg" alt="Soviet Chinchilla Rabbit"><h2>Soviet Chinchilla Rabbit</h2></div>
+    <div class="card" data-animal="Rabbit"><img src="Black Rabbit.jpeg" alt="Black Rabbit"><h2>Black Rabbit</h2></div>
+    <div class="card" data-animal="Rabbit"><img src="Coimbatore White Rabbit.jpeg" alt="Coimbatore White Rabbit"><h2>Coimbatore White Rabbit</h2></div>
+    <div class="card" data-animal="Rabbit"><img src="Salem Black Rabbit.jpeg" alt="Salem Black Rabbit"><h2>Salem Black Rabbit</h2></div>
+    <div class="card" data-animal="Rabbit"><img src="Village Desi Rabbit.jpeg" alt="Village Desi Rabbit"><h2>Village Desi Rabbit</h2></div>
+
+    <!-- ========== PIGEON ========== -->
+    <div class="card" data-animal="Pigeon"><img src="Desi Pigeon.jpeg" alt="Desi Pigeon"><h2>Desi Pigeon</h2></div>
+    <div class="card" data-animal="Pigeon"><img src="King Pigeon.jpeg" alt="King Pigeon"><h2>King Pigeon</h2></div>
+    <div class="card" data-animal="Pigeon"><img src="Fantail Pigeon.jpeg" alt="Fantail Pigeon"><h2>Fantail Pigeon</h2></div>
+    <div class="card" data-animal="Pigeon"><img src="Jacobin Pigeon.jpeg" alt="Jacobin Pigeon"><h2>Jacobin Pigeon</h2></div>
+    <div class="card" data-animal="Pigeon"><img src="Homer Pigeon.jpeg" alt="Homer Pigeon"><h2>Homer Pigeon</h2></div>
+    <div class="card" data-animal="Pigeon"><img src="Modena Pigeon.jpeg" alt="Modena Pigeon"><h2>Modena Pigeon</h2></div>
+    <div class="card" data-animal="Pigeon"><img src="Indian Highflyer Pigeon.jpeg" alt="Indian Highflyer Pigeon"><h2>Indian Highflyer Pigeon</h2></div>
+    <div class="card" data-animal="Pigeon"><img src="Lahore Pigeon.jpeg" alt="Lahore Pigeon"><h2>Lahore Pigeon</h2></div>
+    <div class="card" data-animal="Pigeon"><img src="Shirazi Pigeon.jpeg" alt="Shirazi Pigeon"><h2>Shirazi Pigeon</h2></div>
+    <div class="card" data-animal="Pigeon"><img src="Tamil Nadu Native Pigeons.jpeg" alt="Tamil Nadu Native Pigeons"><h2>Tamil Nadu Native Pigeons</h2></div>
+    <div class="card" data-animal="Pigeon"><img src="Pondicherry Coastal Pigeons.jpeg" alt="Pondicherry Coastal Pigeons"><h2>Pondicherry Coastal Pigeons</h2></div>
+
+    <!-- ========== OX ========== -->
+    <div class="card" data-animal="Ox"><img src="Kangeyam Ox.jpeg" alt="Kangeyam Ox"><h2>Kangeyam Ox</h2></div>
+    <div class="card" data-animal="Ox"><img src="Pulikulam Ox.jpeg" alt="Pulikulam Ox"><h2>Pulikulam Ox</h2></div>
+    <div class="card" data-animal="Ox"><img src="Bargur Ox.jpeg" alt="Bargur Ox"><h2>Bargur Ox</h2></div>
+    <div class="card" data-animal="Ox"><img src="Umblachery Ox.jpeg" alt="Umblachery Ox"><h2>Umblachery Ox</h2></div>
+    <div class="card" data-animal="Ox"><img src="Alambadi Ox.jpeg" alt="Alambadi Ox"><h2>Alambadi Ox</h2></div>
+    <div class="card" data-animal="Ox"><img src="Hallikar Ox.jpeg" alt="Hallikar Ox"><h2>Hallikar Ox</h2></div>
+    <div class="card" data-animal="Ox"><img src="Amrit Mahal Ox.jpeg" alt="Amrit Mahal Ox"><h2>Amrit Mahal Ox</h2></div>
+    <div class="card" data-animal="Ox"><img src="Ongole Ox.jpeg" alt="Ongole Ox"><h2>Ongole Ox</h2></div>
+    <div class="card" data-animal="Ox"><img src="Krishna Valley Ox.jpeg" alt="Krishna Valley Ox"><h2>Krishna Valley Ox</h2></div>
+    <div class="card" data-animal="Ox"><img src="Vechur Ox.jpeg" alt="Vechur Ox"><h2>Vechur Ox</h2></div>
+
+    <!-- ========== LOVEBIRDS ========== -->
+    <div class="card" data-animal="Lovebirds"><img src="Peach-faced Lovebird.jpeg" alt="Peach-faced Lovebird"><h2>Peach-faced Lovebird</h2></div>
+    <div class="card" data-animal="Lovebirds"><img src="Fischer’s Lovebird.jpeg" alt="Fischer’s Lovebird"><h2>Fischer’s Lovebird</h2></div>
+    <div class="card" data-animal="Lovebirds"><img src="Masked Lovebird.jpeg" alt="Masked Lovebird"><h2>Masked Lovebird</h2></div>
+    <div class="card" data-animal="Lovebirds"><img src="Lutino Lovebird.jpeg" alt="Lutino Lovebird"><h2>Lutino Lovebird</h2></div>
+    <div class="card" data-animal="Lovebirds"><img src="Albino Lovebird.jpeg" alt="Albino Lovebird"><h2>Albino Lovebird</h2></div>
+    <div class="card" data-animal="Lovebirds"><img src="Black-cheeked Lovebird.jpeg" alt="Black-cheeked Lovebird"><h2>Black-cheeked Lovebird</h2></div>
+    <div class="card" data-animal="Lovebirds"><img src="Indian Desi Lovebirds.jpeg" alt="Indian Desi Lovebirds"><h2>Indian Desi Lovebirds</h2></div>
+    <div class="card" data-animal="Lovebirds"><img src="Rose-faced Lovebird.jpeg" alt="Rose-faced Lovebird"><h2>Rose-faced Lovebird</h2></div>
+
+    <!-- ========== ROOSTER ========== -->
+    <div class="card" data-animal="Rooster"><img src="Aseel Rooster.jpeg" alt="Aseel Rooster"><h2>Aseel Rooster</h2></div>
+    <div class="card" data-animal="Rooster"><img src="Kadaknath Rooster.jpeg" alt="Kadaknath Rooster"><h2>Kadaknath Rooster</h2></div>
+    <div class="card" data-animal="Rooster"><img src="Giriraja Rooster.jpeg" alt="Giriraja Rooster"><h2>Giriraja Rooster</h2></div>
+    <div class="card" data-animal="Rooster"><img src="Vanaraja Rooster.jpeg" alt="Vanaraja Rooster"><h2>Vanaraja Rooster</h2></div>
+    <div class="card" data-animal="Rooster"><img src="Desi Village Rooster.jpeg" alt="Desi Village Rooster"><h2>Desi Village Rooster</h2></div>
+    <div class="card" data-animal="Rooster"><img src="Kuroiler Rooster.jpeg" alt="Kuroiler Rooster"><h2>Kuroiler Rooster</h2></div>
+    <div class="card" data-animal="Rooster"><img src="Rhode Island Red Rooster.jpeg" alt="Rhode Island Red Rooster"><h2>Rhode Island Red Rooster</h2></div>
+    <div class="card" data-animal="Rooster"><img src="White Leghorn Rooster.jpeg" alt="White Leghorn Rooster"><h2>White Leghorn Rooster</h2></div>
+    <div class="card" data-animal="Rooster"><img src="Cochin Rooster.jpeg" alt="Cochin Rooster"><h2>Cochin Rooster</h2></div>
+    <div class="card" data-animal="Rooster"><img src="Bantam Rooster.jpeg" alt="Bantam Rooster"><h2>Bantam Rooster</h2></div>
+    <div class="card" data-animal="Rooster"><img src="Turkey Cock.jpeg" alt="Turkey Cock"><h2>Turkey Cock</h2></div>
+    <div class="card" data-animal="Rooster"><img src="Madurai Aseel Rooster.jpeg" alt="Madurai Aseel Rooster"><h2>Madurai Aseel Rooster</h2></div>
+    <div class="card" data-animal="Rooster"><img src="Kilakarsal Aseel Rooster.jpeg" alt="Kilakarsal Aseel Rooster"><h2>Kilakarsal Aseel Rooster</h2></div>
+    <div class="card" data-animal="Rooster"><img src="Kodi Aseel Rooster.jpeg" alt="Kodi Aseel Rooster"><h2>Kodi Aseel Rooster</h2></div>
+    <div class="card" data-animal="Rooster"><img src="Salem Rooster.jpeg" alt="Salem Rooster"><h2>Salem Rooster</h2></div>
+
+
+  </div>
+
+<script>
+ 
+  // Back button
+  document.getElementById("backBtn").addEventListener("click", function() {
+    window.location.href = "/";
+
+  });
+
+  // Read animal from localStorage if available; fall back to URL param
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlAnimal = urlParams.get("animal");
+  const storedAnimal = (function(){
+    try { return localStorage.getItem('reference1'); } catch(e){ return null; }
+  })();
+  const animal = storedAnimal || urlAnimal;
+
+  if (!animal) {
+    document.getElementById("noSelection").style.display = "block";
+  } else {
+    const cards = document.querySelectorAll(".card");
+    let found = false;
+    cards.forEach(card => {
+      // Show only cards of selected animal
+      if (card.dataset.animal === animal) {
+        card.style.display = "block";
+        found = true;
+
+        // Fix image src to use static folder dynamically
+        const img = card.querySelector("img");
+        if(img) {
+          const filename = img.getAttribute("src"); // original filename
+          img.src = "{{ url_for('static', filename='images/') }}" + filename;
+        }
+
+        // On click, store breed and navigate
+        card.addEventListener("click", () => {
+          const breed = card.querySelector("h2").innerText;
+
+          // STORE clicked breed as reference2 for later pages (hidden)
+          try {
+            localStorage.setItem('reference2', breed);
+          } catch (e) {
+            console.warn('localStorage not available — reference2 not saved', e);
+          }
+
+          window.location.href = `/index?breed=${encodeURIComponent(breed)}&animal=${encodeURIComponent(animal)}`;
+
+        });
+      } else {
+        // Hide other animal cards
+        card.style.display = "none";
+      }
+    });
+
+    if (!found) {
+      document.getElementById("noSelection").style.display = "block";
+    }
+  }
+
+  // Search filter
+  const searchBox = document.getElementById("searchBox");
+  if (searchBox) {
+    searchBox.addEventListener("keyup", function() {
+      const query = searchBox.value.toLowerCase();
+      document.querySelectorAll(".card").forEach(card => {
+        if (card.dataset.animal === animal) {
+          const name = card.querySelector("h2").innerText.toLowerCase();
+          if (name.includes(query)) {
+            card.style.display = "block";
+          } else {
+            card.style.display = "none";
+          }
+        }
+      });
+    });
+  }
+</script>
+
+</body>
+</html>

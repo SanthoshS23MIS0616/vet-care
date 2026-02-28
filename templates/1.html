@@ -1,0 +1,351 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Select Animal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+ 
+  <style>
+    /* General Body */
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      position: relative;
+      overflow-x: hidden;
+    }
+    /* Full-Screen 3D Colorful Light Background - Performant & Impressive */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      background:
+        /* Light colorful gradient base - Mixed violet/pink/blue/green like chameleon paint */
+        linear-gradient(135deg, hsl(270 100% 50% / 0.4) 0%, hsl(330 100% 70% / 0.3) 20%, hsl(195 100% 50% / 0.35) 40%, hsl(150 100% 50% / 0.3) 60%, hsl(270 100% 50% / 0.4) 80%, hsl(330 100% 70% / 0.3) 100%),
+        /* Additional mixing layers for iridescent shift */
+        linear-gradient(45deg, hsl(195 100% 50% / 0.25) 0%, hsl(150 100% 50% / 0.25) 50%, hsl(270 100% 50% / 0.25) 100%),
+        linear-gradient(90deg, hsl(330 100% 70% / 0.2) 0%, hsl(195 100% 50% / 0.2) 100%),
+        /* 3D layered radials for depth - Subtle colorful glows in specified colors */
+        radial-gradient(ellipse at 15% 15%, hsl(270 100% 50% / 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 85% 85%, hsl(330 100% 70% / 0.12) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 70%, hsl(195 100% 50% / 0.1) 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 20%, hsl(150 100% 50% / 0.12) 0%, transparent 70%);
+      background-size: 400% 400%, 300% 300%, 200% 200%, 100% 100%, 100% 100%, 100% 100%, 100% 100%;
+      animation: bgShift 8s ease-in-out infinite; /* Faster transition time: 8s for dynamic mix */
+      transform-style: preserve-3d;
+      will-change: background-position; /* GPU optimization */
+      pointer-events: none;
+    }
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      background:
+        /* 3D tilt layer - Light rotation for depth with color mix */
+        linear-gradient(45deg, hsl(150 100% 50% / 0.08) 0%, hsl(270 100% 50% / 0.08) 50%, hsl(330 100% 70% / 0.08) 100%);
+      transform: rotateX(3deg) rotateY(3deg) translateZ(-30px); /* Subtle 3D tilt */
+      animation: tilt3D 12s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite alternate; /* Faster gentle sway: 12s */
+      border-radius: 5%; /* Soft immersive edges */
+    }
+    /* Smooth Animations */
+    @keyframes bgShift {
+      0%, 100% { background-position: 0% 0%, 0% 0%, 0% 0%, 15% 15%, 85% 85%, 50% 70%, 70% 20%; }
+      50% { background-position: 100% 100%, 100% 100%, 100% 100%, 85% 85%, 15% 15%, 70% 20%, 50% 70%; }
+    }
+    @keyframes tilt3D {
+      0% { transform: rotateX(1deg) rotateY(1deg) translateZ(-10px); }
+      100% { transform: rotateX(5deg) rotateY(5deg) translateZ(-50px); }
+    }
+    /* Header Section */
+    .header {
+      position: relative;
+      text-align: center;
+      padding: 20px 0 50px;
+      border-bottom: 1px solid #ddd;
+      z-index: 10;
+    }
+    /* Title perfectly centered */
+    .header h1 {
+      margin: 0;
+      font-size: 32px;
+      color: #222;
+    }
+    /* Search box top-right under title line */
+    #searchBox {
+      position: absolute;
+      top: 60px; /* directly under title line */
+      right: 20px;
+      padding: 8px;
+      width: 220px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+      z-index: 10;
+    }
+    /* Grid Layouts */
+    .grid-2 {
+      display: grid;
+      gap: 20px;
+      padding: 20px;
+      margin: auto;
+      grid-template-columns: repeat(2, 1fr);
+      max-width: 1100px;
+      z-index: 10; /* Keep grid above background */
+      position: relative;
+    }
+    /* Card Styles */
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      overflow: hidden;
+      text-align: center;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Smoother easing: Material Design curve for natural lift */
+      cursor: pointer;
+      will-change: transform, box-shadow; /* Optimize for smoother GPU rendering */
+      z-index: 10;
+      position: relative;
+    }
+    .card:hover {
+      transform: translateY(-8px) scale(1.02); /* Slight scale for more engaging lift */
+      box-shadow: 0 12px 24px rgba(0,0,0,0.15); /* Deeper shadow for depth */
+    }
+    .card:active {
+      transform: translateY(-4px) scale(1.01); /* Subtle press-down on click for feedback */
+    }
+    /* Card Images with fixed aspect ratio */
+    .card img {
+      width: 100%;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Smooth image zoom on hover */
+    }
+    .card:hover img {
+      transform: scale(1.05); /* Gentle zoom-in for images */
+    }
+    /* Animal Names */
+    .card h2 {
+      font-size: 18px;
+      margin: 0;
+      padding: 12px 0;
+      color: #222;
+      background: #fff;
+      border-top: 1px solid #ddd;
+      transition: color 0.3s ease-in-out; /* Smooth color shift */
+    }
+   
+    /* Responsive Media Queries */
+    @media (max-width: 800px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+    /* Upload & Predict Section Styles */
+    #uploadSection {
+      margin: 40px auto;
+      max-width: 500px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      text-align: center;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Smooth section fade/slide if needed */
+      z-index: 10;
+      position: relative;
+    }
+    #uploadSection:hover {
+      box-shadow: 0 6px 12px rgba(0,0,0,0.12);
+    }
+    #uploadSection h2 {
+      margin-top: 0;
+    }
+    #uploadSection input[type="file"] {
+      margin-top: 15px;
+      transition: border-color 0.3s ease;
+    }
+    #uploadSection input[type="file"]:focus {
+      border-color: #4CAF50;
+      outline: none;
+    }
+    #uploadSection button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Smooth button interactions */
+    }
+    #uploadSection button:hover {
+      background: #45a049;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+    }
+    #uploadSection button:active {
+      transform: translateY(0);
+    }
+    #result {
+      margin-top: 20px;
+      font-weight: bold;
+      color: #333;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); /* Smooth reveal for results */
+    }
+    #result.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    /* Fade-in-up Animation for Page Load (Bonus Smoothness) */
+    .animate-fade-in-up {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fade-in-up 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards; /* Longer duration + smooth easing */
+    }
+    @keyframes fade-in-up {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    /* Apply fade-in to grid and section for polished entrance */
+    #animalGrid, #uploadSection {
+      animation: fade-in-up 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
+    }
+    .header {
+      animation: fade-in-up 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
+    }
+    
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="header animate-fade-in-up">
+    <h1>🐾 Choose an Animal</h1>
+    <input
+      type="text"
+      id="searchBox"
+      placeholder="Search Animal..."
+      onkeyup="filterAnimals()"
+    >
+  </div>
+  <!-- Animals Grid -->
+  <div class="grid-2" id="animalGrid">
+    <div class="card" onclick="selectAnimal('Dog')">
+      <img src="{{ url_for('static', filename='images/Dog.jpeg') }}" alt="Dog">
+      <h2>Dog</h2>
+    </div>
+    <div class="card" onclick="selectAnimal('Cat')">
+      <img src="{{ url_for('static', filename='images/Cat.jpeg') }}" alt="Cat">
+      <h2>Cat</h2>
+    </div>
+    <div class="card" onclick="selectAnimal('Cow')">
+      <img src="{{ url_for('static', filename='images/Cow.jpeg') }}" alt="Cow">
+      <h2>Cow</h2>
+    </div>
+    <div class="card" onclick="selectAnimal('Goat')">
+      <img src="{{ url_for('static', filename='images/Goat.jpeg') }}" alt="Goat">
+      <h2>Goat</h2>
+    </div>
+    <div class="card" onclick="selectAnimal('Horse')">
+      <img src="{{ url_for('static', filename='images/Horse.jpeg') }}" alt="Horse">
+      <h2>Horse</h2>
+    </div>
+    <div class="card" onclick="selectAnimal('Sheep')">
+      <img src="{{ url_for('static', filename='images/Sheep.jpeg') }}" alt="Sheep">
+      <h2>Sheep</h2>
+    </div>
+    <div class="card" onclick="selectAnimal('Rabbit')">
+      <img src="{{ url_for('static', filename='images/Rabbit.jpeg') }}" alt="Rabbit">
+      <h2>Rabbit</h2>
+    </div>
+    <div class="card" onclick="selectAnimal('Pigeon')">
+      <img src="{{ url_for('static', filename='images/Pigeon.jpeg') }}" alt="Pigeon">
+      <h2>Pigeon</h2>
+    </div>
+    <div class="card" onclick="selectAnimal('Ox')">
+      <img src="{{ url_for('static', filename='images/Ox.jpeg') }}" alt="Ox">
+      <h2>Ox</h2>
+    </div>
+    <div class="card" onclick="selectAnimal('Lovebirds')">
+      <img src="{{ url_for('static', filename='images/Lovebirds.jpeg') }}" alt="Lovebirds">
+      <h2>Lovebirds</h2>
+    </div>
+    <div class="card" onclick="selectAnimal('Rooster')">
+      <img src="{{ url_for('static', filename='images/Rooster.jpeg') }}" alt="Rooster">
+      <h2>Rooster</h2>
+    </div>
+  </div>
+  
+  <script>
+    // Navigate when an animal card is clicked
+    function selectAnimal(animal) {
+      localStorage.setItem('reference1', animal);
+      window.location.href = "/two?animal=" + encodeURIComponent(animal);
+    }
+    // Filter grid by search box input
+    function filterAnimals() {
+      const filter = document.getElementById('searchBox').value.toLowerCase();
+      document.querySelectorAll('#animalGrid .card').forEach(card => {
+        const name = card.querySelector('h2').textContent.toLowerCase();
+        if (name.includes(filter)) {
+          card.style.display = 'block';
+          card.style.opacity = '0';
+          card.style.transform = 'translateY(10px)';
+          // Smooth fade-in for filtered cards
+          setTimeout(() => {
+            card.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+          }, 50);
+        } else {
+          card.style.transition = 'all 0.3s ease';
+          card.style.opacity = '0';
+          card.style.transform = 'translateY(10px)';
+          setTimeout(() => { card.style.display = 'none'; }, 300);
+        }
+      });
+    }
+    // Upload & fetch to Flask Gemini route
+    document.getElementById('predictBtn').onclick = async () => {
+      const fileInput = document.getElementById('animalImage');
+      if (!fileInput.files.length) {
+        return alert('⚠️ Please select an image first.');
+      }
+      const fd = new FormData();
+      fd.append('image', fileInput.files[0]);
+      try {
+        const res = await fetch('/predict_animal_gemini', {
+          method: 'POST',
+          body: fd
+        });
+        if (!res.ok) {
+          throw new Error(`Server returned ${res.status}`);
+        }
+        const data = await res.json(); // <-- will now parse JSON successfully
+        const resultDiv = document.getElementById('result');
+        resultDiv.innerHTML = `
+          <p>Animal: <strong>${data.animal}</strong></p>
+          <p>Breed: <strong>${data.breed}</strong></p>
+        `;
+        resultDiv.classList.add('show'); // Trigger smooth reveal
+      } catch (err) {
+        console.error(err);
+        document.getElementById('result').innerText = `⚠️ Error: ${err.message}`;
+        document.getElementById('result').classList.add('show');
+      }
+    };
+  </script>
+</body>
+</html>

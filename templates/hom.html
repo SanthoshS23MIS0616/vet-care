@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+ 
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Dog Breed Companion</title>
+  <link
+    rel="stylesheet"
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+  >
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+  >
+  <link
+    rel="stylesheet"
+    type="text/css"
+    href="{{ url_for('static', filename='css/styles.css') }}"
+  >
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark dog-navbar">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <i class="fas fa-paw mr-2"></i>Smart Vet Care
+      </a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNav"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link btn btn-nav" href="#">
+              <i class="fas fa-home mr-2"></i>Home
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link btn btn-nav" href="#services">
+              <i class="fas fa-cog mr-2"></i>Services
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link btn btn-nav" href="#developers">
+              <i class="fas fa-info-circle mr-2"></i>About
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link btn btn-contact" href="#developers">
+              <i class="fas fa-envelope mr-2"></i>Contact
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Services Section -->
+  <section class="services py-5" id="services">
+    <div class="container">
+      <h2 class="text-center mb-4">Our Services</h2>
+      <div class="row">
+
+        <!-- Dog Breed Classification Card -->
+        <div class="col-md-4">
+          <div class="card">
+            <img
+              src="{{ url_for('static', filename='images/ai.png') }}"
+              class="card-img-top" style="border-radius: 0"
+            >
+            <div class="card-body">
+              <h3 class="card-title">Dog Breed Classification</h3>
+              <p class="card-text">
+                Upload a photo of your dog, and our AI will determine its breed.
+              </p>
+              <!-- trigger your file+predict modal -->
+              <a
+                href="#"
+                class="btn btn-primary"
+                data-toggle="modal"
+                data-target="#classifyBreedModal"
+              >Classify Breed</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dog Breed Recommendation Card -->
+        <div class="col-md-4">
+          <div class="card">
+            <img
+              src="{{ url_for('static', filename='images/ai1.png') }}"
+              class="card-img-top" style="border-radius: 0"
+            >
+            <div class="card-body">
+              <h3 class="card-title">Dog Breed Recommendation</h3>
+              <p class="card-text">
+                Answer a few questions, and we'll recommend the best dog breed for you.
+              </p>
+              <a
+                href="#"
+                class="btn btn-primary"
+                data-toggle="modal"
+                data-target="#breedRecommendationModal"
+              >Get Recommendation</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Disease Prediction Card -->
+        <div class="col-md-4">
+          <div class="card">
+            <img
+              src="{{ url_for('static', filename='images/ai2.png') }}"
+              class="card-img-top" style="border-radius: 0"
+            >
+            <div class="card-body">
+              <h3 class="card-title">Disease Prediction</h3>
+              <p class="card-text">
+                Provide your dog's symptoms, and our AI will predict potential diseases.
+              </p>
+              <form
+                action="/goto_disease"
+                method="post"
+                style="display:inline-block;"
+              >
+                <button type="submit" class="btn btn-primary">
+                  Predict Disease
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Breed Classification Modal -->
+  <div
+    class="modal fade"
+    id="classifyBreedModal"
+    tabindex="-1"
+    aria-labelledby="classifyBreedModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title">Classify Dog Breed from Image</h5>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+          ><span>&times;</span></button>
+        </div>
+
+        <div class="modal-body">
+          <input
+            type="file"
+            id="animalImage"
+            accept="image/*"
+            class="form-control mb-2"
+          >
+          <button
+            class="btn btn-success"
+            onclick="predictAnimal()"
+          >Classify Now</button>
+          <div
+            id="imageResult"
+            class="mt-3 p-2 bg-light"
+          ></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+
+      <!-- Breed Recommendation Modal -->
+      <div class="modal fade" id="breedRecommendationModal" tabindex="-1" aria-labelledby="breedRecommendationModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="breedRecommendationModalLabel">Find Your Perfect Canine Companion in Just 18 Questions!</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <form id="breedRecommendationForm" name="dog">
+                    <!-- Question 1 -->
+                    <div class="form-group">
+                        <label for="height_c">1. Preferred height (inches):</label>
+                        <input type="range" class="form-control-range"  min="7" max="32" step="1" value="7" oninput="updateValue('height_c', 'height_value', ' inches')" name="height_c" id="height_c">
+                        <small id="height_value" class="form-text text-muted">7 inches</small>
+                        <small class="form-text text-muted">
+                            Range: 7 inches (Very small) to 32 inches (Very large)
+                        </small>
+                    </div>
+                    <!-- Question 2: Weight -->
+                    <div class="form-group">
+                        <label for="weight_c">2. Preferred weight (pounds):</label>
+                        <input type="range" class="form-control-range" id="weight_c" min="5" max="195" step="1" value="5" oninput="updateValue('weight_c', 'weight_value', ' pounds')">
+                        <small id="weight_value" class="form-text text-muted">5 pounds</small>
+                        <small class="form-text text-muted">
+                            Range: 5 pounds (Very light) to 195 pounds (Very heavy)
+                        </small>
+                    </div>
+                    <!-- Question 3: Life Expectancy -->
+                    <div class="form-group">
+                        <label for="life_c">3. Expected life span (years):</label>
+                        <input type="range" class="form-control-range" id="life_c" min="2" max="18" step="1" value="2" oninput="updateValue('life_c', 'life_value', ' years')">
+                        <small id="life_value" class="form-text text-muted">2 years</small>
+                        <small class="form-text text-muted">
+                            Range: 2 years (Short-lived) to 18 years (Long-lived)
+                        </small>
+                    </div>
+                    <!-- Question 4: Coat Length -->
+                    <div class="form-group">
+                        <label for="coat_length_c">4. Preferred coat length:</label>
+                        <input type="range" class="form-control-range" id="coat_length_c" min="1" max="3" step="1" value="1" oninput="updateValue('coat_length_c', 'coat_length_value', '')">
+                        <small id="coat_length_value" class="form-text text-muted">1 (Short)</small>
+                        <small class="form-text text-muted">
+                            Range: 1 (Short) to 3 (Long)
+                        </small>
+                    </div>
+
+                    <!-- Question 5: Affectionate With Family -->
+                    <div class="form-group">
+                        <label for="affection_c">5. Affection level with family:</label>
+                        <input type="range" class="form-control-range" id="affection_c" min="1" max="5" step="1" value="1" oninput="updateValue('affection_c', 'affection_value', '')">
+                        <small id="affection_value" class="form-text text-muted">1 (Independent)</small>
+                        <small class="form-text text-muted">
+                            Range: 1 (Independent) to 5 (Very affectionate)
+                        </small>
+                    </div>
+
+                    <!-- Question 6: Good With Young Children -->
+                    <div class="form-group">
+                        <label for="good_with_kids_c">6. Compatibility with young children:</label>
+                        <input type="range" class="form-control-range" id="good_with_kids_c" min="1" max="5" step="1" value="1" oninput="updateValue('good_with_kids_c', 'good_with_kids_value', '')">
+                        <small id="good_with_kids_value" class="form-text text-muted">1 (Not recommended)</small>
+                        <small class="form-text text-muted">
+                            Range: 1 (Not recommended) to 5 (Excellent with children)
+                        </small>
+                    </div>
+
+                    <!-- Question 7: Good With Other Dogs -->
+                    <div class="form-group">
+                        <label for="good_with_dogs_c">7. Friendliness towards other dogs:</label>
+                        <input type="range" class="form-control-range" id="good_with_dogs_c" min="1" max="5" step="1" value="1" oninput="updateValue('good_with_dogs_c', 'good_with_dogs_value', '')">
+                        <small id="good_with_dogs_value" class="form-text text-muted">1 (Prefers solitude)</small>
+                        <small class="form-text text-muted">
+                            Range: 1 (Prefers solitude) to 5 (Enjoys company)
+                        </small>
+                    </div>
+
+                    <!-- Question 8: Shedding Level -->
+                    <div class="form-group">
+                        <label for="shedding_c">8. Shedding level:</label>
+                        <input type="range" class="form-control-range" id="shedding_c" min="1" max="5" step="1" value="1" oninput="updateValue('shedding_c', 'shedding_value', '')">
+                        <small id="shedding_value" class="form-text text-muted">1 (No shedding)</small>
+                        <small class="form-text text-muted">
+                            Range: 1 (No shedding) to 5 (High shedding)
+                        </small>
+                        
+                    </div>
+
+                    <!-- Question 9: Coat Grooming Frequency -->
+                    <div class="form-group">
+                        <label for="grooming_c">9. Grooming frequency needed:</label>
+                        <input type="range" class="form-control-range" id="grooming_c" min="1" max="5" step="1" value="1" oninput="updateValue('grooming_c', 'grooming_value', '')">
+                        <small id="grooming_value" class="form-text text-muted">1 (Monthly)</small>
+                        <small class="form-text text-muted">
+                            Range: 1 (Monthly) to 5 (Daily)
+                        </small>
+                    </div>
+
+                    <!-- Question 10: Drooling Level -->
+                    <div class="form-group">
+                        <label for="drooling_c">10. Drooling level:</label>
+                        <input type="range" class="form-control-range" id="drooling_c" min="1" max="5" step="1" value="1" oninput="updateValue('drooling_c', 'drooling_value', '')">
+                        <small id="drooling_value" class="form-text text-muted">1 (No drooling)</small>
+                        <small class="form-text text-muted">
+                            Range: 1 (No drooling) to 5 (Needs a towel)
+                        </small>
+                    </div>
+
+                    <!-- Question 11: Openness To Strangers -->
+                    <div class="form-group">
+                        <label for="openness_c">11. Openness to strangers:</label>
+                        <input type="range" class="form-control-range" id="openness_c" min="1" max="5" step="1" value="1" oninput="updateValue('openness_c', 'openness_value', '')">
+                        <small id="openness_value" class="form-text text-muted">1 (Very reserved)</small>
+                        <small class="form-text text-muted">
+                            Range: 1 (Very reserved) to 5 (Very welcoming)
+                        </small>
+                    </div>
+
+                    <!-- Question 12: Playfulness Level -->
+                    <div class="form-group">
+                        <label for="playfulness_c">12. Playfulness level:</label>
+                        <input type="range" class="form-control-range" id="playfulness_c" min="1" max="5" step="1" value="1" oninput="updateValue('playfulness_c', 'playfulness_value', '')">
+                        <small id="playfulness_value" class="form-text text-muted">1 (Rarely playful)</small>
+                        <small class="form-text text-muted">
+                            Range: 1 (Rarely playful) to 5 (Always playful)
+                        </small>
+                    </div>
+
+                    <!-- Question 13: Watchdog/Protective Nature -->
+                    <div class="form-group">
+                        <label for="watchdog_c">13. Watchdog/protective nature:</label>
+                        <input type="range" class="form-control-range" id="watchdog_c" min="1" max="5" step="1" value="1" oninput="updateValue('watchdog_c', 'watchdog_value', '')">
+                        <small id="watchdog_value" class="form-text text-muted">1 (Not protective)</small>
+                        <small class="form-text text-muted">
+                            Range: 1 (Not protective) to 5 (Highly protective)
+                        </small>
+                    </div>
+
+                    <!-- Question 14: Adaptability Level -->
+                    <div class="form-group">
+                        <label for="adaptability_c">14. Adaptability level:</label>
+                        <input type="range" class="form-control-range" id="adaptability_c" min="1" max="5" step="1" value="1" oninput="updateValue('adaptability_c', 'adaptability_value', '')">
+                        <small id="adaptability_value" class="form-text text-muted">1 (Needs consistent routine)</small>
+                        <small class="form-text text-muted">
+                            Range: 1 (Needs consistent routine) to 5 (Highly adaptable)
+                        </small>
+                    </div>
+
+                    <!-- Question 15: Trainability Level -->
+                    <div class="form-group">
+                        <label for="trainability_c">15. Trainability level:</label>
+                        <input type="range" class="form-control-range" id="trainability_c" min="1" max="5" step="1" value="1" oninput="updateValue('trainability_c', 'trainability_value', '')">
+                        <small id="trainability_value" class="form-text text-muted">1 (Difficult to train)</small>
+                        <small class="form-text text-muted">
+                            Range: 1 (Difficult to train) to 5 (Easily trainable)
+                        </small>
+                    </div>
+
+                    <!-- Question 16: Energy Level -->
+                    <div class="form-group">
+                        <label for="energy_c">16. Energy level:</label>
+                        <input type="range" class="form-control-range" id="energy_c" min="1" max="5" step="1" value="1" oninput="updateValue('energy_c', 'energy_value', '')">
+                        <small id="energy_value" class="form-text text-muted">1 (Very calm)</small>
+                        <small class="form-text text-muted">
+                            Range: 1 (Very calm) to 5 (High energy)
+                        </small>
+                    </div>
+
+                    <!-- Question 17: Barking Level -->
+                    <div class="form-group">
+                        <label for="barking_c">17. Barking tendency:</label>
+                        <input type="range" class="form-control-range" id="barking_c" min="1" max="5" step="1" value="1" oninput="updateValue('barking_c', 'barking_value', '')">
+                        <small id="barking_value" class="form-text text-muted">1 (Rarely barks)</small>
+                        <small class="form-text text-muted">
+                            Range: 1 (Rarely barks) to 5 (Frequent barker)
+                        </small>
+                    </div>
+
+                    <!-- Question 18: Mental Stimulation Needs -->
+                    <div class="form-group">
+                        <label for="mental_stimulation_c">18. Mental stimulation needs:</label>
+                        <input type="range" class="form-control-range" id="mental_stimulation_c" min="1" max="5" step="1" value="1" oninput="updateValue('mental_stimulation_c', 'mental_stimulation_value', '')">
+                        <small id="mental_stimulation_value" class="form-text text-muted">1 (Little need for busy tasks)</small>
+                        <small class="form-text text-muted">
+                            Range: 1 (Low need) to 5 (High need for mental engagement)
+                        </small>
+                    </div>
+                <!-- Repeat for each attribute, adjusting the min, max, and step values -->
+                <!-- Breed Recommendation Modal (continued) -->
+                <button type="button" class="btn btn-primary" onclick="recommendBreed()">Recommend Now</button>
+                    <div class=" mt-3" style="font-size: 10px;">
+<!--    <i class="fas fa-exclamation-triangle mr-2"></i>-->
+    CanineCare AI's breed recommendation model is a starting point for exploration.
+  </div>
+
+
+                </form>
+                <div id="recommendationResult" class="w-100">
+                    {% if names %}
+                    <h2>We recommend:</h2>
+                    <ul>
+                        {% for name, distance in zip(names, distances) %}
+                        <li>{{ name }} - Similarity: {{ distance | round(2) }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+                </div>
+          </div>
+        </div>
+      </div>
+    
+
+  <!-- Footer (unchanged) -->
+  <footer class="bg-dark text-white py-3">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6" id="developers">
+          <h4>ML Model Development Team</h4>
+          <ul class="list-unstyled">
+            <li>Santhosh S</li><li>Gokul</li>
+            <li>Yoga</li>
+          </ul>
+          <p class="department-batch">
+            Branch:
+            <span>M.Tech integrated(SOFTWARE ENGINEERING)</span>
+            <br>2025-2028
+          </p>
+          
+          <p class="college-name">
+           University:
+            <span>Vellore Institute of Technology (Vellore)</span>
+          </p>
+        </div>
+        <div class="col-md-6">
+          <h4>Quick Links</h4>
+          <ul class="list-unstyled">
+            <li><a href="#">Home</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#developers">About</a></li>
+            <li><a href="#developers">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <hr>
+      <div class="text-center">
+        &copy; 2025 Smart Vetcare. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <!-- JS Section -->
+  <script>
+    // 1) CLASSIFY BREED via Gemini AI
+    function predictAnimal() {
+      const fileInput = document.getElementById('animalImage');
+      const resultDiv = document.getElementById('imageResult');
+
+      if (!fileInput.files.length) {
+        return alert("Please choose an image first.");
+      }
+
+      resultDiv.textContent = "⏳ Predicting animal and breed…";
+
+      const formData = new FormData();
+      formData.append('image', fileInput.files[0]);
+
+      // ←– corrected endpoint name:
+      fetch('{{ url_for("predict_animal_gemini") }}', {
+        method: 'POST',
+        body: formData
+      })
+      .then(res => {
+        if (!res.ok) throw new Error(`Server returned ${res.status}`);
+        return res.json();
+      })
+      .then(data => {
+        if (data.error) {
+          resultDiv.textContent = "❌ " + data.error;
+        } else {
+          resultDiv.innerHTML = 
+            `✅ Animal: <b>${data.animal}</b><br>` +
+            `✅ Breed: <b>${data.breed}</b>`;
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        resultDiv.textContent = "⚠️ Error: " + err.message;
+      });
+    }
+
+    // 2) BREED RECOMMENDATION (unchanged)
+ function recommendBreed() {
+    const form = document.getElementById("breedRecommendationForm");
+    const forms = {};
+
+    for (let i = 0; i < 18; i++) {
+        forms[form[i].id] = form[i].value;
+    }
+
+    const jsonForms = JSON.stringify(forms);
+
+    fetch('/recommend_breed', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: jsonForms
+    })
+    .then(response => response.json())
+    .then(data => {
+        const recommendationResult = document.getElementById('recommendationResult');
+        recommendationResult.innerHTML = ''; // Clear previous results
+
+        if (data.length > 0) {
+            const resultsHtml = data.map(item => `${item.name} - Similarity: ${Math.round(item.similarity * 100)}% <a href="${item.url}" target="_blank">More Details</a>`).join('<br>');
+            recommendationResult.innerHTML = '<strong>We recommend:</strong><br>' + resultsHtml;
+        } else {
+            recommendationResult.innerHTML = 'No recommendations available.';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        const recommendationResult = document.getElementById('recommendationResult');
+        recommendationResult.innerHTML = 'Failed to retrieve data.';
+    });
+}
+            </script>
+            <script>
+            function updateValue(sliderId, valueId, unit) {
+                const slider = document.getElementById(sliderId);
+                const output = document.getElementById(valueId);
+
+                output.textContent = slider.min + unit;
+
+                slider.oninput = function() {
+                    output.textContent = this.value + unit;
+                };
+            }
+
+            // Call the updateValue function for each range input
+            updateValue('height_c', 'height_value', ' inches');
+            updateValue('weight_c', 'weight_value', ' pounds');
+            updateValue('life_c', 'life_value', ' years');
+            updateValue('coat_length_c', 'coat_length_value', '');
+            updateValue('affection_c', 'affection_value', '');
+            updateValue('good_with_kids_c', 'good_with_kids_value', '');
+            updateValue('good_with_dogs_c', 'good_with_dogs_value', '');
+            updateValue('shedding_c', 'shedding_value', '');
+            updateValue('grooming_c', 'grooming_value', '');
+            updateValue('drooling_c', 'drooling_value', '');
+            updateValue('openness_c', 'openness_value', '');
+            updateValue('playfulness_c', 'playfulness_value', '');
+            updateValue('watchdog_c', 'watchdog_value', '');
+            updateValue('adaptability_c', 'adaptability_value', '');
+            updateValue('trainability_c', 'trainability_value', '');
+            updateValue('energy_c', 'energy_value', '');
+            updateValue('barking_c', 'barking_value', '');
+            updateValue('mental_stimulation_c', 'mental_stimulation_value', '');
+            </script>
+  <!-- Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"
+  ></script>
+  <script
+    src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+  ></script>
+</body>
+</html>

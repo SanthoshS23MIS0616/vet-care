@@ -148,27 +148,47 @@ def generate_prescription_logic(data):
         "explanation": "Tailored plan for {0}: Supportive care with hydration, nutrition, and monitoring. No cure—prevent complications. Isolate, control vectors. Consult vet for hands-on. AI only.".format(disease_text)
     }, indent=2)
 
-    prompt = f"""
-You are a veterinary AI assistant specializing in pet prescriptions. Based on the disease '{disease_text}', provide a biologically accurate JSON treatment plan with EXACTLY at least 4 medicines and 4 diet plans tailored SPECIFICALLY to this disease. Analyze the disease and generate real-time, disease-specific recommendations (e.g., antivirals for viral, topicals for skin). If skin-related, include 2+ ointments. Use pet profile for context but prioritize disease.
+   prompt = f"""
+You are a professional veterinarian.
+Use only your internal veterinary knowledge.
+Do NOT use any external tools.
 
-Pet Profile:
-- Animal: {context['animal']}
-- Breed: {context['breed'] or 'Unknown'}
-- Pet Name: {context['petName']}
-- Pet Number: {context['petNo']}
+Generate a structured JSON prescription strictly using your internal medical knowledge.
 
-EXAMPLE (adapt to '{disease_text}'):
-{example_json}
+DO NOT search the internet.
+DO NOT call any external tools.
+DO NOT reference websites.
+DO NOT use duckduckgo_search.
 
-Return ONLY valid JSON—no text outside. Ensure 4+ entries each. If short, add supportive but disease-relevant.
+Return ONLY valid JSON in this format:
 
-Keys:
-- Prescription: date (YYYY-MM-DD), time (HH:MM or 'Daily'), medicine, dosage (mg/kg), route, duration, notes (vet disclaimer).
-- Diet: date, feeding_time (morning/afternoon/evening or 'Daily'), food_type, quantity, notes (animal-adjusted).
-- Explanation: Concise, disease-focused, with vet emphasis.
-- Dates: {datetime.utcnow().strftime("%Y-%m-%d")}. Times: IST 08:00, 14:00, 20:00. Dosages: mg/kg for 10-20kg pet or 200-500kg animal.
+{{
+  "petName": "",
+  "disease": "",
+  "prescription_plan": [
+    {{
+      "medicine": "",
+      "dosage": "",
+      "route": "",
+      "duration": ""
+    }}
+  ],
+  "diet_plan": [
+    {{
+      "food_type": "",
+      "quantity": ""
+    }}
+  ],
+  "explanation": ""
+}}
+
+Pet details:
+Species: {species}
+Breed: {breed}
+Age: {age}
+Weight: {weight}
+Disease: {disease}
 """
-
     # Primary: Vertex AI (Gemini) for real-time
     if GenerativeModel is not None:
         try:

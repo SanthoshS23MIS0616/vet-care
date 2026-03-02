@@ -1,11 +1,9 @@
-import json
 import os
+import json
 import traceback
 from flask import Flask, render_template, request, jsonify, redirect, url_for, current_app
 import cv2
 import numpy as np
-import tensorflow as tf
-import tensorflow_hub as hub
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 import joblib
@@ -13,12 +11,12 @@ from PIL import Image as PILImage
 from agno.agent import Agent
 #from agno.models.google import Gemini
 from agno.models.groq import Groq
-from agno.tools.duckduckgo import DuckDuckGoTools
-from agno.media import Image as AgnoImage
-from weasyprint import HTML
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib import colors
+from reportlab.lib.units import inch
 from datetime import datetime, timedelta # Added for IST time
-print(tf.__version__)
-print(hub.__version__)
+
 # -------------------------
 # Flask App
 # -------------------------
@@ -31,11 +29,11 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 #  keep your own API key secure. Replace below or set GOOGLE_API_KEY in environment.
 #GOOGLE_API_KEY = "AIzaSyDwX4DmIafKtG7QZQURCEFAt5T2W8mZ9sA"
 #os.environ["GOOGLE_API_KEY"] = GOOGLE_API_KEY
-GROQ_API_KEY = "gsk_xxxxxxxxxxxxxxxxxxxxxxxx"   # ← Paste your Groq key
-os.environ["GROQ_API_KEY"] = GROQ_API_KEY
+#GROQ_API_KEY = "gsk_xxxxxxxxxxxxxxxxxxxxxxxx"   # ← Paste your Groq key
+#os.environ["GROQ_API_KEY"] = GROQ_API_KEY
 
-if not GROQ_API_KEY:
-    raise ValueError("⚠️ Please set your GROQ API Key in GOOGLE_API_KEY")
+#if not GROQ_API_KEY:
+   # raise ValueError("⚠️ Please set your GROQ API Key in GOOGLE_API_KEY")
 # -------------------------
 # Initialize AI Agent
 # -------------------------
@@ -45,23 +43,35 @@ if not GROQ_API_KEY:
     #markdown=True
 #)
 
+
+from dotenv import load_dotenv
+load_dotenv()
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
+
+if not GROQ_API_KEY:
+    raise RuntimeError("❌ GROQ_API_KEY environment variable not set.")
+
 medical_agent = Agent(
     model=Groq(id="llama-3.3-70b-versatile"),    # ← Change this line
-    tools=[DuckDuckGoTools()],
     markdown=True
 )
+
 # -------------------------
 # Queries for Gemini
 # -------------------------
-skin_query = """
-You are a veterinary skin disease expert.
-Analyze the uploaded animal image and return only the predicted disease name only apart from that not even single letter needed.
-"""
+
 animal_query = """
-You are a veterinary expert. Analyze the uploaded animal image.
-Return ONLY:
-- Animal Name
-- Breed
+You are a veterinary expert.
+
+Analyze the uploaded image.
+
+Return ONLY in this exact format:
+
+Animal: <animal name>
+Breed: <breed name>
+
+Do not add anything else.
+No extra text.
 """
 # pp.py — Add these near the bottom of the file, after your other /predict_* routes
 # 1) Prompt template for symptoms → disease
@@ -208,61 +218,8 @@ Ensure 100% accuracy: Research internally if needed via tools. Prioritize safety
 # -------------------------
 # Helper Functions for Gemini
 # -------------------------
-def analyze_image(image_path, query_text):
-    """
-    Resize image, wrap it into AgnoImage, call medical_agent.run with images,
-    return response.content string. Clean up temp resized file.
-    """
-    temp_path = None
-    try:
-        image = PILImage.open(image_path).convert("RGB")
-        width, height = image.size
-        aspect_ratio = width / height if height != 0 else 1
-        new_width = 500
-        new_height = max(1, int(new_width / aspect_ratio))
-        resized_image = image.resize((new_width, new_height))
-        temp_path = os.path.join(app.config['UPLOAD_FOLDER'], "resized.png")
-        resized_image.save(temp_path, format="PNG")
-        agno_image = AgnoImage(filepath=temp_path)
-        response = medical_agent.run(query_text, images=[agno_image])
-        # `response` is expected to have a `.content` attribute (string)
-        return response.content
-    except Exception as e:
-        app.logger.exception("Error in analyze_image")
-        return f"⚠️ Analysis error: {e}"
-    finally:
-        if temp_path and os.path.exists(temp_path):
-            try:
-                os.remove(temp_path)
-            except Exception:
-                pass
-# -------------------------
 # Load ML Models
-# -------------------------
-# Make sure these paths exist relative to where you run pp.py
-tf_model_path = 'model/20220804-16551659632113-all-images-Adam.h5'
-pkl_model_path = 'model/dogModel1.pkl'
-custom_objects = {'KerasLayer': hub.KerasLayer}
-if not os.path.exists(tf_model_path):
-    app.logger.warning("TensorFlow model not found at %s. predict_breed may crash.", tf_model_path)
-if not os.path.exists(pkl_model_path):
-    app.logger.warning("Joblib model not found at %s. predict_disease may crash.", pkl_model_path)
-# Load tf model inside try/except to avoid crash at app startup in dev
-model = None
-try:
-    with tf.keras.utils.custom_object_scope(custom_objects):
-        model = tf.keras.models.load_model(tf_model_path, custom_objects=custom_objects)
-    app.logger.info("Loaded tensorflow model from %s", tf_model_path)
-except Exception as e:
-    app.logger.exception("Failed to load tensorflow model: %s", e)
-    model = None
-joblib_model = None
-try:
-    joblib_model = joblib.load(pkl_model_path)
-    app.logger.info("Loaded joblib model from %s", pkl_model_path)
-except Exception as e:
-    app.logger.exception("Failed to load joblib model: %s", e)
-    joblib_model = None
+#
 # -------------------------
 # Load & preprocess dataset
 # -------------------------
@@ -453,37 +410,7 @@ def index():
 # -------------------------
 # Breed Prediction using CNN
 # -------------------------
-labels = ["Labrador", "Beagle", "German Shepherd", "Bulldog", "Poodle"]
-def predict_breed(image):
-    if model is None:
-        raise RuntimeError("TensorFlow model is not loaded.")
-    image = cv2.resize(image, (224, 224))
-    image = np.expand_dims(image, axis=0)
-    image = tf.image.convert_image_dtype(image, dtype=tf.float32)
-    image = tf.constant(image)
-    prediction = model.predict(image).flatten()
-    return labels[np.argmax(prediction)]
-@app.route('/predict_breed_route', methods=['POST'])
-def predict_breed_route():
-    file = request.files.get('image')
-    if not file:
-        return jsonify({"error": "No image provided"}), 400
-    file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-    file.save(file_path)
-    try:
-        image = cv2.imread(file_path)
-        predicted_breed = predict_breed(image)
-    except Exception as e:
-        app.logger.exception("Error in predict_breed_route")
-        predicted_breed = None
-    finally:
-        try:
-            os.remove(file_path)
-        except Exception:
-            pass
-    if predicted_breed is None:
-        return jsonify({"error": "Breed prediction failed"}), 500
-    return jsonify({"predicted_breed": predicted_breed})
+
 # -------------------------
 # Disease Prediction (joblib)
 # -------------------------
@@ -546,89 +473,125 @@ def predict_symptoms_gemini():
         return jsonify({"error": str(e)}), 500
 # -------------------------
 # Gemini-based Image Analysis (Animal & Breed)
-# -------------------------
-@app.route("/predict_animal_gemini", methods=["POST"])
-def predict_animal_gemini():
-    if "image" not in request.files:
-        return jsonify({"error": "No file selected"}), 400
-    file = request.files["image"]
-    if not file.filename:
-        return jsonify({"error": "No file selected"}), 400
-    file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-    file.save(file_path)
-    raw = analyze_image(file_path, animal_query)
-    try:
-        os.remove(file_path)
-    except Exception:
-        pass
-    # Log raw response for debugging
-    app.logger.info("🔹 RAW GEMINI (animal): %s", raw.replace("\n", " \\n "))
-    # Parse out Animal and Breed
-    animal_name = "Unknown"
-    breed_name = "Unknown"
-    for line in raw.splitlines():
-        text = line.strip().lstrip("-* ").strip()
-        if ":" in text:
-            key, val = [s.strip() for s in text.split(":", 1)]
-            if key.lower().startswith("animal"):
-                animal_name = val
-            elif key.lower().startswith("breed"):
-                breed_name = val
-    return jsonify({"animal": animal_name, "breed": breed_name, "raw": raw})
+#
 # -------------------------
 # Gemini-based Image Analysis (Skin) — used by frontend (/predict_skin_gemini)
 # -------------------------
-@app.route("/predict_skin_gemini", methods=["POST"])
-def predict_skin_gemini():
+
+@app.route("/predict_skin", methods=["POST"])
+def predict_skin():
     if "image" not in request.files:
         return jsonify({"error": "No file selected"}), 400
+
     file = request.files["image"]
     if not file.filename:
         return jsonify({"error": "No file selected"}), 400
+
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
     file.save(file_path)
-    raw = analyze_image(file_path, skin_query)
+
     try:
-        os.remove(file_path)
-    except Exception:
-        pass
-    app.logger.info("🔹 RAW GEMINI (skin): %s", raw.replace("\n", " \\n "))
-    # Try to extract a succinct disease result (first non-empty line)
-    result = next((line for line in raw.splitlines() if line.strip()), raw)
-    return jsonify({"result": result, "raw": raw})
-# Keep /predict_skin for compatibility (calls predict_skin_gemini)
-@app.route("/predict_skin", methods=["POST"])
-def predict_skin():
-    return predict_skin_gemini()
+        # ---------- OpenCV Analysis ----------
+        image = cv2.imread(file_path)
+        image = cv2.resize(image, (300, 300))
+
+        hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+
+        # Redness detection
+        lower_red = np.array([0, 50, 50])
+        upper_red = np.array([10, 255, 255])
+        mask = cv2.inRange(hsv, lower_red, upper_red)
+        redness_ratio = np.sum(mask > 0) / (300 * 300)
+
+        # Brightness
+        brightness = np.mean(hsv[:, :, 2])
+
+        # Texture (roughness)
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        edges = cv2.Canny(gray, 50, 150)
+        roughness_ratio = np.sum(edges > 0) / (300 * 300)
+
+        # Create text report
+        report = f"""
+        Skin Analysis Report:
+        Redness Level: {redness_ratio:.2f}
+        Brightness Level: {brightness:.2f}
+        Roughness Level: {roughness_ratio:.2f}
+        """
+
+        # ---------- Send TEXT to Groq ----------
+        prompt = f"""
+        You are a veterinary dermatologist.
+
+        Based on this analysis:
+
+        {report}
+
+        Predict the most likely skin disease.
+        Return ONLY disease name.
+        """
+
+        response = medical_agent.run(prompt)
+        disease = response.content.strip()
+
+        return jsonify({"result": disease, "analysis": report})
+
+    except Exception as e:
+        app.logger.exception("Skin prediction error")
+        return jsonify({"error": str(e)}), 500
+
+    finally:
+        try:
+            os.remove(file_path)
+        except:
+            pass
+
 def generate_pdf(result, petNo):
-    """
-    Renders the templats_pdf.html with the prescription & diet data,
-    generates a PDF via WeasyPrint, saves it to UPLOAD_FOLDER, and
-    returns a publicly accessible URL.
-    """
-    # 1) Render the Jinja2 template to an HTML string
-    rendered_html = render_template(
-        'templats_pdf.html',
-        disease = result.get('disease', ''),
-        prescription_plan = result['prescription_plan'],
-        diet_plan = result['diet_plan'],
-        explanation = result['explanation'],
-        petName = result.get('petName', 'Unnamed'), # Added for top right corner
-        petNo = result.get('petNo', 'Unknown') # Added for top right corner
-    )
-    # 2) Convert HTML string to PDF bytes
-    pdf_bytes = HTML(string=rendered_html).write_pdf()
-    # 3) Save the PDF file into uploads folder
+
     filename = f"{petNo}.pdf"
     output_dir = current_app.config['UPLOAD_FOLDER']
     output_path = os.path.join(output_dir, filename)
-    with open(output_path, 'wb') as f:
-        f.write(pdf_bytes)
-    # 4) Return the external URL for the created PDF file
+
+    doc = SimpleDocTemplate(output_path)
+    styles = getSampleStyleSheet()
+    elements = []
+
+    elements.append(Paragraph(f"<b>Pet Name:</b> {result.get('petName','')}", styles['Normal']))
+    elements.append(Paragraph(f"<b>Pet ID:</b> {petNo}", styles['Normal']))
+    elements.append(Spacer(1, 0.2 * inch))
+
+    elements.append(Paragraph(f"<b>Disease:</b> {result.get('disease','')}", styles['Heading2']))
+    elements.append(Spacer(1, 0.2 * inch))
+
+    elements.append(Paragraph("<b>Prescription Plan:</b>", styles['Heading3']))
+    for p in result.get("prescription_plan", []):
+        elements.append(Paragraph(
+            f"{p['medicine']} - {p['dosage']} ({p['route']}) for {p['duration']}",
+            styles['Normal']
+        ))
+        elements.append(Spacer(1, 0.1 * inch))
+
+    elements.append(Spacer(1, 0.3 * inch))
+
+    elements.append(Paragraph("<b>Diet Plan:</b>", styles['Heading3']))
+    for d in result.get("diet_plan", []):
+        elements.append(Paragraph(
+            f"{d['food_type']} - {d['quantity']}",
+            styles['Normal']
+        ))
+        elements.append(Spacer(1, 0.1 * inch))
+
+    elements.append(Spacer(1, 0.3 * inch))
+
+    elements.append(Paragraph("<b>Explanation:</b>", styles['Heading3']))
+    elements.append(Paragraph(result.get("explanation", ""), styles['Normal']))
+
+    doc.build(elements)
+
     return url_for(
         'static',
-        filename = f"uploads/{filename}",
-        _external = True
+        filename=f"uploads/{filename}",
+        _external=True
     )
 # -------------------------
 # Animal & Breed Selection (redirect helpers)

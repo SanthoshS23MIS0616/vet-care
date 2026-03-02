@@ -111,6 +111,6 @@ Werkzeug==3.0.1
 wrapt==1.14.2
 zopfli==0.4.1
 opencv-python-headless
-numpy==1.26.4
-pandas==2.1.4
+numpy==1.26.4          # ← upgrade from 1.24.3 (compatible with pandas 2.1.4 & TF 2.15)
+pandas==2.1.4          # ← keep this, or upgrade to 2.2.3 if you want newer
 Pillow
